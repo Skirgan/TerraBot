@@ -2,7 +2,7 @@
 from discord.ui import Button, View
 from discord.ext import commands
 from pycord.multicog import subcommand
-from config import channel_log_delete_id
+from config import channel_log_delete_id, moderator_role_id
 from .functions import autocomplete_mention_names
 from database import connection_mentions as connection, cursor_mentions as cursor
 
@@ -103,7 +103,7 @@ class UserCommandsMentions(commands.Cog):
                 if mention_public == 1 or (mention_public == 0 and ctx.author.id == owner_id) or ctx.author.get_role(moderator_role_id) is not None:
                     mention_members.remove(str(ctx.author.id))
                     for member_id in mention_members:
-                        member = await bot.get_or_fetch_user(member_id)
+                        member = await self.bot.get_or_fetch_user(member_id)
                         if member is not None:
                             dm = member.dm_channel
                             if dm is None:	

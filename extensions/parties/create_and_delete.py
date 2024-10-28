@@ -67,7 +67,7 @@ class CreateAndDeleteParties(commands.Cog):
 			)):
 	    await ctx.defer()
 
-	    if party_name in autocomplete_names():
+	    if party_name in [party[0] for party in cursor.execute(f"SELECT name FROM parties").fetchall()]:
 		    if is_party_owner(ctx, party_name = party_name):
 			    try:
 				    await ctx.guild.get_role(int(cursor.execute(f"SELECT role_id FROM parties WHERE name = '{party_name}'").fetchone()[0])).delete()

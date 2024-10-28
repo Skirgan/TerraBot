@@ -71,13 +71,14 @@ class requestView(discord.ui.View):
         self.stop()
 
 async def request(interaction, member, party_name):
+    current_invites = cursor.execute(f"SELECT invites FROM parties WHERE name = '{party_name}'").fetchone()[0].split(", ")
     if interaction.message.author.id == member.id:
-        await interaction.respond("<:cross:1297268043667476490> Вы не можете взаимодействовать сами с собой.")
+        await interaction.respond("<:cross:1297268043667476490> Вы не можете взаимодействовать сами с собой.", ephemeral = True)
         return False
-    if member.id in cursor.execute(f"SELECT invites FROM parties WHERE name = '{party_name}'").fetchone()[0].split(", "):
-        await interaction.respond("<:mute:1297267954022617279> Этому участнику уже отправлен запрос.")
+    if str(member.id) in current_invites:
+        await interaction.respond("<:mute:1297267954022617279> Этому участнику уже отправлен запрос.", ephemeral = True)
         return False
-    new_list_of_invites = f"{current_invites}, {member.id}" if len(current_invites) > 0 else member.id
+    new_list_of_invites = f"{', '.join(current_invites)}, {member.id}" if current_invites[0] else member.id
     cursor.execute(f"UPDATE parties SET invites = '{new_list_of_invites}' WHERE name = '{party_name}'")
     connection.commit()
     View = requestView()
@@ -89,7 +90,7 @@ async def request(interaction, member, party_name):
             await interaction.respond("<:cross:1297268043667476490> Не удалось создать личные сообщения с пользователем.")
             return False
     await interaction.respond("<:mail:1297268371263586367> Запрос отправлен.")
-    await dm.send(content = f"<:mail:1297268371263586367> {interaction.message.author.global_name} предлагает вам стать участником группы `\"{party_name}\"`", view = View)
+    await dm.send(content = f"<:mail:1297268371263586367> {interaction.user.mention} предлагает вам стать участником группы `\"{party_name}\"`", view = View)
     await View.wait()
     if View.value:
         await interaction.respond(f"<:plus:1297268385863700603> {member.mention} принял запрос о взаимодействии с `\"{party_name}\"`", ephemeral = True)

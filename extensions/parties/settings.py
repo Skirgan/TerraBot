@@ -107,6 +107,7 @@ class PartyInviteView(discord.ui.View):
     def __init__(self, party_name):
         super().__init__()
         self.party_name = party_name
+        self.timeout = None
 
     @discord.ui.user_select(
         placeholder = "Выберите участника, которого хотите пригласить в группу."

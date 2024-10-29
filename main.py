@@ -44,5 +44,3 @@ async def on_ready():
     await bot.change_presence(activity = discord.Activity(type = discord.ActivityType.custom, state = f"Запуск произведён {datetime.datetime.now().strftime('%H:%M:%S')}"))
 
 bot.run(token)
-
-# Test webhook 3

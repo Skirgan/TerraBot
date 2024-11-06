@@ -1,10 +1,11 @@
 ﻿import datetime
 import discord
+from discord.ext import commands
 from pycord.multicog import Bot
 import os
 from colorama import init, Fore, Style
 from extensions import *
-from config import token
+from config import token, administrator_role_id
 
 intents = discord.Intents.default()
 intents = discord.Intents.all()
@@ -43,4 +44,133 @@ async def on_ready():
 
     await bot.change_presence(activity = discord.Activity(type = discord.ActivityType.custom, state = f"Запуск произведён {datetime.datetime.now().strftime('%H:%M:%S')}"))
 
+class AdminSettings(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    def generate_commands_list(self, bot, ctx):
+        text_for_send = ""
+        for cog in list(bot.cogs.keys()):
+            for command in bot.get_cog(cog).get_commands():
+                if type(command) == discord.SlashCommand:
+                    text_for_send += f"\n● `{command}` (команда)"
+                elif type(command) == discord.SlashCommandGroup:
+                    text_for_send += f"\n● `{command}` (группа):"
+                    for command_in_group in command.walk_commands():
+                        text_for_send += f"\n> `{command_in_group}` (команда)"
+                else:
+                    print(type(command))
+            for event in bot.get_cog(cog).get_listeners():
+                text_for_send += f"\n● `{event[0]}` (обработчик)"
+        return text_for_send
+
+    settings = discord.SlashCommandGroup("аdmin")
+
+    @settings.command(name = "load")
+    async def load_cog(
+        self,
+        ctx: discord.ApplicationContext,
+        cog_path: discord.Option(
+            str,
+            name = "name",
+            required = True
+        )):
+        await ctx.defer()
+
+        if ctx.author.get_role(administrator_role_id):
+            response = await ctx.respond(embed = discord.Embed(
+                colour = discord.Colour.blurple(),
+                description = f"<:staff:1297268197581520926> Приступаю к загрузке \"`{cog_path}`\"."
+                ))
+            try:
+                bot.load_extension(cog_path)
+                response_embed = discord.Embed(
+                    colour = discord.Colour.green(),
+                    description = f"<:check:1297268217303007314> \"`{cog_path}`\" загружен. "
+                    )
+                response_embed.add_field(
+                    name = "Подключённые команды:",
+                    value = self.generate_commands_list(self.bot, ctx)
+                    )
+                await response.edit(embed = response_embed)
+            except Exception as e:
+                await response.edit(embed = discord.Embed(
+                    colour = discord.Colour.red(),
+                    description = f"<:cross:1297268043667476490> `{e}`"
+                    ))
+        else:
+            await ctx.respond(f"<:block:1297268337264300094> Вы не являетесь администратором.")
+
+    @settings.command(name = "unload")
+    async def unload_cog(
+        self,
+        ctx: discord.ApplicationContext,
+        cog_path: discord.Option(
+            str,
+            name = "name",
+            required = True
+        )):
+        await ctx.defer()
+
+        if ctx.author.get_role(administrator_role_id):
+            response = await ctx.respond(embed = discord.Embed(
+                colour = discord.Colour.blurple(),
+                description = f"<:staff:1297268197581520926> Приступаю к загрузке \"`{cog_path}`\"."
+                ))
+            try:
+                bot.unload_extension(cog_path)
+                response_embed = discord.Embed(
+                    colour = discord.Colour.green(),
+                    description = f"<:check:1297268217303007314> \"`{cog_path}`\" отгружен. "
+                    )
+                response_embed.add_field(
+                    name = "Подключённые команды:",
+                    value = self.generate_commands_list(self.bot, ctx)
+                    )
+                await response.edit(embed = response_embed)
+            except Exception as e:
+                await response.edit(embed = discord.Embed(
+                    colour = discord.Colour.red(),
+                    description = f"<:cross:1297268043667476490> `{e}`"
+                    ))
+        else:
+            await ctx.respond(f"<:block:1297268337264300094> Вы не являетесь администратором.")
+
+    @settings.command(name = "reload")
+    async def reload_cog(
+        self,
+        ctx: discord.ApplicationContext,
+        cog_path: discord.Option(
+            str,
+            name = "name",
+            required = True
+        )):
+        await ctx.defer()
+
+        if ctx.author.get_role(administrator_role_id):
+            response = await ctx.respond(embed = discord.Embed(
+                colour = discord.Colour.blurple(),
+                description = f"<:staff:1297268197581520926> Приступаю к загрузке \"`{cog_path}`\"."
+                ))
+            try:
+                bot.unload_extension(cog_path)
+                bot.load_extension(cog_path)
+                response_embed = discord.Embed(
+                    colour = discord.Colour.green(),
+                    description = f"<:check:1297268217303007314> \"`{cog_path}`\" перезагружен. "
+                    )
+                response_embed.add_field(
+                    name = "Подключённые команды:",
+                    value = self.generate_commands_list(self.bot, ctx)
+                    )
+                await response.edit(embed = response_embed)
+            except Exception as e:
+                await response.edit(embed = discord.Embed(
+                    colour = discord.Colour.red(),
+                    description = f"<:cross:1297268043667476490> `{e}`"
+                    ))
+        else:
+            await ctx.respond(f"<:block:1297268337264300094> Вы не являетесь администратором.")
+
+bot.add_cog(AdminSettings(bot))
 bot.run(token)

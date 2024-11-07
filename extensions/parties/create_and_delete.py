@@ -1,7 +1,7 @@
 import discord
 from discord.ui import Button, View
 from discord.ext import commands
-from .functions import autocomplete_party_names, is_party_owner, is_dm
+from .functions import autocomplete_party_names, is_party_owner, is_activist
 from database import connection_parties as connection, cursor_parties as cursor
 
 class CreateAndDeleteParties(commands.Cog):
@@ -28,7 +28,7 @@ class CreateAndDeleteParties(commands.Cog):
             )):
         await ctx.defer(ephemeral = True)
 
-        if is_dm(ctx):
+        if is_activist(ctx):
             if party_name not in [party[0] for party in cursor.execute(f"SELECT name FROM parties").fetchall()]:
                 role = await ctx.guild.create_role(name = f'Жетон "{party_name.capitalize()}"')
                 await role.edit(colour = discord.Colour.random())

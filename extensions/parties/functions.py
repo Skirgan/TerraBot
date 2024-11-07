@@ -1,11 +1,11 @@
-from config import dm_role_id
+from config import activist_role_id
 from database import connection_parties as connection, cursor_parties as cursor
 
 async def autocomplete_party_names(ctx):
 	return [party[0] for party in cursor.execute(f"SELECT name FROM parties").fetchall()]
 
-def is_dm(ctx):
-	return ctx.author.get_role(dm_role_id) is not None
+def is_activist(ctx):
+	return ctx.author.get_role(activist_role_id) is not None
 
 def is_party_owner(ctx, party_name):
 	return ctx.author.id == cursor.execute(f"SELECT dm_id FROM parties WHERE name = '{party_name}'").fetchone()[0]

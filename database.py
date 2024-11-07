@@ -23,3 +23,16 @@ cursor_parties.execute("""CREATE TABLE IF NOT EXISTS parties (
 		invites TEXT
 	)""")
 connection_parties.commit()
+
+connection_tasks = sqlite3.connect("tasks.db")
+cursor_tasks = connection_tasks.cursor()
+
+cursor_tasks.execute("""CREATE TABLE IF NOT EXISTS tasks (
+		name TEXT,
+		description TEXT,
+		forum_id INT,
+		dm_id INT,
+		role_id INT,
+		position INT
+	)""")
+connection_tasks.commit()

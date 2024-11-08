@@ -4,12 +4,13 @@ from discord.ext import commands
 from pycord.multicog import subcommand
 from config import master_role_id, administrator_role_id
 from database import connection_hits as connection, cursor_hits as cursor
-from .functions import is_master
+from .functions import is_master, create_hit_bar
 
 class ReduceHitsModal(discord.ui.Modal):
     def __init__(self, member):
         super().__init__(title = "Отнять хиты")
         self.member = member
+        self.timeout = None
         self.now_hits = cursor.execute(f"SELECT now_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         self.more_hits = cursor.execute(f"SELECT more_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         if self.more_hits > 0:
@@ -52,6 +53,7 @@ class ReduceHitsModal(discord.ui.Modal):
         else:
             description_text_for_response = f"<:check:1297268217303007314> Авантюрист понёс урон в размере {reduce_hits_amount} хитов. Теперь у него {new_now_hits} хитов."
             description_text_for_original_message = f"<:manage:1297268323200929842> У авантюриста {self.member.mention} {new_now_hits} / {max_hits} хитов."
+        description_text_for_original_message += f"\n\n{create_hit_bar(new_now_hits, new_more_hits, max_hits)}"
         await interaction.response.edit_message(
             embed = discord.Embed(
                 description = description_text_for_original_message,
@@ -69,6 +71,7 @@ class AddHitsModal(discord.ui.Modal):
     def __init__(self, member):
         super().__init__(title = "Добавить хиты")
         self.member = member
+        self.timeout = None
         self.now_hits = cursor.execute(f"SELECT now_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         self.more_hits = cursor.execute(f"SELECT more_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         if self.more_hits > 0:
@@ -98,10 +101,11 @@ class AddHitsModal(discord.ui.Modal):
         connection.commit()
         if self.more_hits > 0:
             description_text_for_response = f"<:check:1297268217303007314> Авантюрист излечил свои ранения в размере {add_hits_amount} хитов. Теперь у него {new_now_hits} + {self.more_hits} хитов."
-            description_text_for_original_message = f"<:manage:1297268323200929842> У авантюриста {self.member.mention} {new_now_hits} + {new_more_hits} / {max_hits} хитов."
+            description_text_for_original_message = f"<:manage:1297268323200929842> У авантюриста {self.member.mention} {new_now_hits} + {self.more_hits} / {max_hits} хитов."
         else:
             description_text_for_response = f"<:check:1297268217303007314> Авантюрист излечил свои ранения в размере {add_hits_amount} хитов. Теперь у него {new_now_hits} хитов."
             description_text_for_original_message = f"<:manage:1297268323200929842> У авантюриста {self.member.mention} {new_now_hits} / {max_hits} хитов."
+        description_text_for_original_message += f"\n\n{create_hit_bar(new_now_hits, self.more_hits, max_hits)}"
         await interaction.response.edit_message(
             embed = discord.Embed(
                 description = description_text_for_original_message,
@@ -119,8 +123,8 @@ class SetNowHitsModal(discord.ui.Modal):
     def __init__(self, member):
         super().__init__(title = "Установить хиты")
         self.member = member
+        self.timeout = None
         self.now_hits = cursor.execute(f"SELECT now_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
-        self.more_hits = cursor.execute(f"SELECT more_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         self.add_item(discord.ui.InputText(
             label = "Установка хитов авантюриста",
             placeholder = self.now_hits
@@ -128,7 +132,7 @@ class SetNowHitsModal(discord.ui.Modal):
 
     async def callback(self, interaction):
         try:
-            set_hits_amount = int(self.children[0].value)
+            set_now_hits_amount = int(self.children[0].value)
         except:
             await ctx.respond(
                 embed = discord.Embed(
@@ -137,15 +141,17 @@ class SetNowHitsModal(discord.ui.Modal):
                 ephemeral = True
                 )
         max_hits = cursor.execute(f"SELECT max_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
-        new_now_hits = set_hits_amount
+        more_hits = cursor.execute(f"SELECT more_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
+        new_now_hits = set_now_hits_amount
         cursor.execute(f"UPDATE hits SET now_hits = '{new_now_hits}' WHERE id = {self.member.id}")
         connection.commit()
         if self.more_hits > 0:
-            description_text_for_response = f"<:check:1297268217303007314> Авантюристу установлено **{new_now_hits}** + {self.more_hits} хитов."
-            description_text_for_original_message = f"<:manage:1297268323200929842> У авантюриста {self.member.mention} {new_now_hits} + {self.more_hits} / {max_hits} хитов."
+            description_text_for_response = f"<:check:1297268217303007314> Авантюристу установлено **{new_now_hits}** + {more_hits} хитов."
+            description_text_for_original_message = f"<:manage:1297268323200929842> У авантюриста {self.member.mention} {new_now_hits} + {more_hits} / {max_hits} хитов."
         else:
             description_text_for_response = f"<:check:1297268217303007314> Авантюристу установлено **{new_now_hits}** хитов."
             description_text_for_original_message = f"<:manage:1297268323200929842> У авантюриста {self.member.mention} {new_now_hits} / {max_hits} хитов."
+        description_text_for_original_message += f"\n\n{create_hit_bar(new_now_hits, more_hits, max_hits)}"
         await interaction.response.edit_message(
             embed = discord.Embed(
                 description = description_text_for_original_message,
@@ -163,7 +169,7 @@ class SetMoreHitsModal(discord.ui.Modal):
     def __init__(self, member):
         super().__init__(title = "Установить дополнительные хиты")
         self.member = member
-        self.now_hits = cursor.execute(f"SELECT now_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
+        self.timeout = None
         self.more_hits = cursor.execute(f"SELECT more_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         self.add_item(discord.ui.InputText(
             label = "Установка хитов авантюриста",
@@ -181,15 +187,17 @@ class SetMoreHitsModal(discord.ui.Modal):
                 ephemeral = True
                 )
         max_hits = cursor.execute(f"SELECT max_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
+        now_hits = cursor.execute(f"SELECT now_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         new_more_hits = set_more_hits_amount
         cursor.execute(f"UPDATE hits SET more_hits = '{new_more_hits}' WHERE id = {self.member.id}")
         connection.commit()
         if self.more_hits > 0:
-            description_text_for_response = f"<:check:1297268217303007314> Авантюристу установлено {self.now_hits} + **{new_more_hits}** хитов."
-            description_text_for_original_message = f"<:manage:1297268323200929842> У авантюриста {self.member.mention} {self.now_hits} + {new_more_hits} / {max_hits} хитов."
+            description_text_for_response = f"<:check:1297268217303007314> Авантюристу установлено {now_hits} + **{new_more_hits}** хитов."
+            description_text_for_original_message = f"<:manage:1297268323200929842> У авантюриста {self.member.mention} {now_hits} + {new_more_hits} / {max_hits} хитов."
         else:
-            description_text_for_response = f"<:check:1297268217303007314> Авантюристу установлено {self.now_hits} хитов."
-            description_text_for_original_message = f"<:manage:1297268323200929842> У авантюриста {self.member.mention} {self.now_hits} / {max_hits} хитов."
+            description_text_for_response = f"<:check:1297268217303007314> Авантюристу установлено {now_hits} хитов."
+            description_text_for_original_message = f"<:manage:1297268323200929842> У авантюриста {self.member.mention} {now_hits} / {max_hits} хитов."
+        description_text_for_original_message += f"\n\n{create_hit_bar(now_hits, new_more_hits, max_hits)}"
         await interaction.response.edit_message(
             embed = discord.Embed(
                 description = description_text_for_original_message,
@@ -207,11 +215,11 @@ class SetMaxHitsModal(discord.ui.Modal):
     def __init__(self, member):
         super().__init__(title = "Установить максимальные хиты")
         self.member = member
-        self.now_hits = cursor.execute(f"SELECT now_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
-        self.more_hits = cursor.execute(f"SELECT more_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
+        self.timeout = None
+        max_hits = cursor.execute(f"SELECT max_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         self.add_item(discord.ui.InputText(
             label = "Установка хитов авантюриста",
-            placeholder = cursor.execute(f"SELECT max_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
+            placeholder = max_hits
             ))
 
     async def callback(self, interaction):
@@ -224,16 +232,18 @@ class SetMaxHitsModal(discord.ui.Modal):
                     colour = discord.Colour.red()),
                 ephemeral = True
                 )
-        max_hits = cursor.execute(f"SELECT max_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
+        now_hits = cursor.execute(f"SELECT now_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
+        more_hits = cursor.execute(f"SELECT more_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         new_max_hits = set_max_hits_amount
         cursor.execute(f"UPDATE hits SET max_hits = '{new_max_hits}' WHERE id = {self.member.id}")
         connection.commit()
         if self.more_hits > 0:
             description_text_for_response = f"<:check:1297268217303007314> Авантюристу установлено {new_max_hits} максммальных хитов."
-            description_text_for_original_message = f"<:manage:1297268323200929842> У авантюриста {self.member.mention} {self.now_hits} + {self.more_hits} / {new_max_hits} хитов."
+            description_text_for_original_message = f"<:manage:1297268323200929842> У авантюриста {self.member.mention} {now_hits} + {more_hits} / {new_max_hits} хитов."
         else:
             description_text_for_response = f"<:check:1297268217303007314> Авантюристу установлено {new_max_hits} максимальных хитов."
-            description_text_for_original_message = f"<:manage:1297268323200929842> У авантюриста {self.member.mention} {self.now_hits} / {new_max_hits} хитов."
+            description_text_for_original_message = f"<:manage:1297268323200929842> У авантюриста {self.member.mention} {now_hits} / {new_max_hits} хитов."
+        description_text_for_original_message += f"\n\n{create_hit_bar(now_hits, more_hits, new_max_hits)}"
         await interaction.response.edit_message(
             embed = discord.Embed(
                 description = description_text_for_original_message,
@@ -251,37 +261,38 @@ class HitsSettingsView(discord.ui.View):
     def __init__(self, member):
         super().__init__()
         self.member = member
+        self.timeout = None
 
     @discord.ui.select(
-        placeholder = "Placeholder (🐟)",
+        placeholder = "Выберите действие",
         options = [
             discord.SelectOption(
                 label = "Отнять хиты",
                 value = "reduce_hits",
-                emoji = "🐟"),
+                emoji = "<:minus:1297268270126338120>"),
             discord.SelectOption(
                 label = "Добавить хиты",
                 value = "add_hits",
-                emoji = "🐟"),
+                emoji = "<:plus:1297268385863700603>"),
             discord.SelectOption(
                 label = "Установить хиты",
-                value = "set_hits",
-                emoji = "🐟"),
+                value = "set_now_hits",
+                emoji = "<:manage:1297268323200929842>"),
             discord.SelectOption(
                 label = "Установить дополнительные хиты",
                 value = "set_more_hits",
-                emoji = "🐟"),
+                emoji = "<:manage:1297268323200929842>"),
             discord.SelectOption(
                 label = "Установить максимальные хиты",
                 value = "set_max_hits",
-                emoji = "🐟")])
+                emoji = "<:manage:1297268323200929842>")])
     async def select_callback(self, select, interaction):
         choice = select.values[0]
         if choice == "reduce_hits":
             await interaction.response.send_modal(ReduceHitsModal(self.member))
         if choice == "add_hits":
             await interaction.response.send_modal(AddHitsModal(self.member))
-        if choice == "set_hits":
+        if choice == "set_now_hits":
             await interaction.response.send_modal(SetNowHitsModal(self.member))
         if choice == "set_more_hits":
             await interaction.response.send_modal(SetMoreHitsModal(self.member))
@@ -292,6 +303,7 @@ class AddMemberView(discord.ui.View):
     def __init__(self, member):
         super().__init__()
         self.member = member
+        self.timeout = None
 
     @discord.ui.button(label = "Да, добавить",
                        style = discord.ButtonStyle.green,
@@ -313,7 +325,7 @@ class Hits(commands.Cog):
 
     @subcommand("гильдия")
     @discord.slash_command(name = "изменить_хиты")
-    async def hits(
+    async def hits_settings(
         self,
         ctx: discord.ApplicationContext,
         member: discord.Option(
@@ -332,6 +344,7 @@ class Hits(commands.Cog):
                     description_text = f"<:manage:1297268323200929842> У авантюриста {member.mention} {now_hits} + {more_hits} / {max_hits} хитов."
                 else:
                     description_text = f"<:manage:1297268323200929842> У авантюриста {member.mention} {now_hits} / {max_hits} хитов."
+                description_text += f"\n\n{create_hit_bar(now_hits, more_hits, max_hits)}"
                 await ctx.respond(
                     embed = discord.Embed(
                         description = description_text,
@@ -375,6 +388,7 @@ class Hits(commands.Cog):
                 description_text = f"<:search:1297268102089670666> У авантюриста {member.mention} {now_hits} + {more_hits} / {max_hits} хитов."
             else:
                 description_text = f"<:search:1297268102089670666> У авантюриста {member.mention} {now_hits} / {max_hits} хитов."
+            description_text += f"\n\n{create_hit_bar(now_hits, more_hits, max_hits)}"
             await ctx.respond(
                 embed = discord.Embed(
                     description = description_text,

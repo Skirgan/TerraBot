@@ -46,17 +46,17 @@ class CallboardView(discord.ui.View):
             discord.SelectOption(
                 label = "Задание 3",
                 value = "3_task",
-                description = "Чистый листок бумаги, закреплённый латунным украшением"
+                description = "Чистый листок бумаги, закреплённый латунным украшением.
             ),
             discord.SelectOption(
                 label = "Задание 4",
                 value = "4_task",
-                description = "Свиток из загадочной блестящей бумаги"
+                description = "Свиток из загадочной блестящей бумаги."
             ),
             discord.SelectOption(
                 label = "Задание 5",
                 value = "5_task",
-                description = "Грубая деревянная табличка, прибитая арбалетным болтом"
+                description = "Грубая деревянная табличка, прибитая арбалетным болтом."
             )])
     async def select_callback(self, select, interaction):
         choice = select.values[0]

@@ -4,6 +4,7 @@ from discord.ext import commands
 from pycord.multicog import subcommand
 from config import master_role_id, administrator_role_id
 from database import connection_tasks as connection, cursor_tasks as cursor
+from functions import is_master
 
 class MasterCommands(commands.Cog):
     def __init__(self, bot):
@@ -67,7 +68,7 @@ class MasterCommands(commands.Cog):
         ):
         await ctx.defer(ephemeral = True)
         
-        if ctx.author.get_role(master_role_id):
+        if is_master(ctx):
             if cursor.execute(f"SELECT * FROM tasks WHERE dm_id = {ctx.author.id}").fetchone() is None:
                 if cursor.execute(f"SELECT name FROM tasks WHERE position = {position}").fetchone()[0] is None:
                     role = await ctx.guild.create_role(name = f'Билет "{name}"')
@@ -128,7 +129,7 @@ class MasterCommands(commands.Cog):
         ):
         await ctx.defer(ephemeral = True)
         
-        if ctx.author.get_role(master_role_id):
+        if is_master(ctx):
             if cursor.execute(f"SELECT * FROM tasks WHERE dm_id = {ctx.author.id}").fetchone() is not None:
                 name = cursor.execute(f"SELECT name FROM tasks WHERE dm_id = {ctx.author.id}").fetchone()[0]
                 forum_id = cursor.execute(f"SELECT forum_id FROM tasks WHERE dm_id = {ctx.author.id}").fetchone()[0]

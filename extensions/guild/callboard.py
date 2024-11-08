@@ -46,7 +46,7 @@ class CallboardView(discord.ui.View):
             discord.SelectOption(
                 label = "Задание 3",
                 value = "3_task",
-                description = "Чистый листок бумаги, закреплённый латунным украшением.
+                description = "Чистый листок бумаги, закреплённый латунным украшением."
             ),
             discord.SelectOption(
                 label = "Задание 4",

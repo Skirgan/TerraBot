@@ -29,6 +29,7 @@ class TaskView(discord.ui.View):
 class CallboardView(discord.ui.View):
     def __init__(self):
         super().__init__()
+        self.timeout = None
 
     @discord.ui.select(
         placeholder = "Сорвать листок...",

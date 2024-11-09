@@ -26,7 +26,10 @@ def create_hit_bar(now_hits: int, more_hits: int, max_hits: int):
 		}
 	bar_segment = max_hits / 10
 	if now_hits <= max_hits:
-		filled_segments = int(round(now_hits / bar_segment))
+		try:
+			filled_segments = int(round(now_hits / bar_segment))
+		except ZeroDivisionError:
+			filled_segments = 0
 	else:
 		filled_segments = 10
 	raw = ("1" * filled_segments) + ("0" * (10 - filled_segments))

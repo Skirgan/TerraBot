@@ -145,7 +145,7 @@ class SetNowHitsModal(discord.ui.Modal):
         new_now_hits = set_now_hits_amount
         cursor.execute(f"UPDATE hits SET now_hits = '{new_now_hits}' WHERE id = {self.member.id}")
         connection.commit()
-        if self.more_hits > 0:
+        if more_hits > 0:
             description_text_for_response = f"<:check:1297268217303007314> Авантюристу установлено **{new_now_hits}** + {more_hits} хитов."
             description_text_for_original_message = f"<:manage:1297268323200929842> У авантюриста {self.member.mention} {new_now_hits} + {more_hits} / {max_hits} хитов."
         else:
@@ -237,7 +237,7 @@ class SetMaxHitsModal(discord.ui.Modal):
         new_max_hits = set_max_hits_amount
         cursor.execute(f"UPDATE hits SET max_hits = '{new_max_hits}' WHERE id = {self.member.id}")
         connection.commit()
-        if self.more_hits > 0:
+        if more_hits > 0:
             description_text_for_response = f"<:check:1297268217303007314> Авантюристу установлено {new_max_hits} максммальных хитов."
             description_text_for_original_message = f"<:manage:1297268323200929842> У авантюриста {self.member.mention} {now_hits} + {more_hits} / {new_max_hits} хитов."
         else:

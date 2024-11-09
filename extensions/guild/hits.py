@@ -1,16 +1,18 @@
+import datetime
 import discord
 from discord.ui import Button, View
 from discord.ext import commands
 from pycord.multicog import subcommand
-from config import master_role_id, administrator_role_id
+from config import master_role_id, administrator_role_id, channel_log_hits_id
 from database import connection_hits as connection, cursor_hits as cursor
 from .functions import is_master, create_hit_bar
 
 class ReduceHitsModal(discord.ui.Modal):
-    def __init__(self, member):
+    def __init__(self, member: discord.Member, bot: discord.Bot):
         super().__init__(title = "Отнять хиты")
         self.member = member
         self.timeout = None
+        self.bot = bot
         self.now_hits = cursor.execute(f"SELECT now_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         self.more_hits = cursor.execute(f"SELECT more_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         if self.more_hits > 0:
@@ -58,7 +60,7 @@ class ReduceHitsModal(discord.ui.Modal):
             embed = discord.Embed(
                 description = description_text_for_original_message,
                 colour = discord.Colour.orange()),
-            view = HitsSettingsView(self.member)
+            view = HitsSettingsView(self.member, self.bot)
             )
         await interaction.respond(
             embed = discord.Embed(
@@ -66,12 +68,25 @@ class ReduceHitsModal(discord.ui.Modal):
                 colour = discord.Colour.green()),
             ephemeral = True
             )
+        log_channel = self.bot.get_channel(channel_log_hits_id)
+        log_embed = discord.Embed(
+            description = f"<:logs:1297268241105944788> `{interaction.user.name}` отнимает у `{self.member.name}` `{reduce_hits_amount}` хитов.\n> {self.now_hits} -> {new_now_hits}",
+            colour = discord.Colour.blurple(),
+            timestamp = datetime.datetime.now()
+            )
+        log_embed.set_author(
+            name = interaction.user.name,
+            url = interaction.user.jump_url,
+            icon_url = interaction.user.avatar.url
+            )
+        await log_channel.send(embed = log_embed)
 
 class AddHitsModal(discord.ui.Modal):
-    def __init__(self, member):
+    def __init__(self, member: discord.Member, bot: discord.Bot):
         super().__init__(title = "Добавить хиты")
         self.member = member
         self.timeout = None
+        self.bot = bot
         self.now_hits = cursor.execute(f"SELECT now_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         self.more_hits = cursor.execute(f"SELECT more_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         if self.more_hits > 0:
@@ -110,7 +125,7 @@ class AddHitsModal(discord.ui.Modal):
             embed = discord.Embed(
                 description = description_text_for_original_message,
                 colour = discord.Colour.orange()),
-            view = HitsSettingsView(self.member)
+            view = HitsSettingsView(self.member, self.bot)
             )
         await interaction.respond(
             embed = discord.Embed(
@@ -118,12 +133,25 @@ class AddHitsModal(discord.ui.Modal):
                 colour = discord.Colour.green()),
             ephemeral = True
             )
+        log_channel = self.bot.get_channel(channel_log_hits_id)
+        log_embed = discord.Embed(
+            description = f"<:logs:1297268241105944788> `{interaction.user.name}` добавляет `{self.member.name}` `{add_hits_amount}` хитов.\n> {self.now_hits} -> {new_now_hits}",
+            colour = discord.Colour.blurple(),
+            timestamp = datetime.datetime.datetime.now()
+            )
+        log_embed.set_author(
+            name = interaction.user.name,
+            url = interaction.user.jump_url,
+            icon_url = interaction.user.avatar.url
+            )
+        await log_channel.send(embed = log_embed)
 
 class SetNowHitsModal(discord.ui.Modal):
-    def __init__(self, member):
+    def __init__(self, member: discord.Member, bot: discord.Bot):
         super().__init__(title = "Установить хиты")
         self.member = member
         self.timeout = None
+        self.bot = bot
         self.now_hits = cursor.execute(f"SELECT now_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         self.add_item(discord.ui.InputText(
             label = "Установка хитов авантюриста",
@@ -156,7 +184,7 @@ class SetNowHitsModal(discord.ui.Modal):
             embed = discord.Embed(
                 description = description_text_for_original_message,
                 colour = discord.Colour.orange()),
-            view = HitsSettingsView(self.member)
+            view = HitsSettingsView(self.member, self.bot)
             )
         await interaction.respond(
             embed = discord.Embed(
@@ -164,12 +192,25 @@ class SetNowHitsModal(discord.ui.Modal):
                 colour = discord.Colour.green()),
             ephemeral = True
             )
+        log_channel = self.bot.get_channel(channel_log_hits_id)
+        log_embed = discord.Embed(
+            description = f"<:logs:1297268241105944788> `{interaction.user.name}` устанавливает `{self.member.name}` текущие хиты.\n> {self.now_hits} -> {new_now_hits}",
+            colour = discord.Colour.blurple(),
+            timestamp = datetime.datetime.now()
+            )
+        log_embed.set_author(
+            name = interaction.user.name,
+            url = interaction.user.jump_url,
+            icon_url = interaction.user.avatar.url
+            )
+        await log_channel.send(embed = log_embed)
 
 class SetMoreHitsModal(discord.ui.Modal):
-    def __init__(self, member):
+    def __init__(self, member: discord.Member, bot: discord.Bot):
         super().__init__(title = "Установить дополнительные хиты")
         self.member = member
         self.timeout = None
+        self.bot = bot
         self.more_hits = cursor.execute(f"SELECT more_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         self.add_item(discord.ui.InputText(
             label = "Установка хитов авантюриста",
@@ -202,7 +243,7 @@ class SetMoreHitsModal(discord.ui.Modal):
             embed = discord.Embed(
                 description = description_text_for_original_message,
                 colour = discord.Colour.orange()),
-            view = HitsSettingsView(self.member)
+            view = HitsSettingsView(self.member, self.bot)
             )
         await interaction.respond(
             embed = discord.Embed(
@@ -210,16 +251,29 @@ class SetMoreHitsModal(discord.ui.Modal):
                 colour = discord.Colour.green()),
             ephemeral = True
             )
+        log_channel = self.bot.get_channel(channel_log_hits_id)
+        log_embed = discord.Embed(
+            description = f"<:logs:1297268241105944788> `{interaction.user.name}` устанавливает `{self.member.name}` бонусные хиты.\n> {self.more_hits} -> {new_more_hits}",
+            colour = discord.Colour.blurple(),
+            timestamp = datetime.datetime.now()
+            )
+        log_embed.set_author(
+            name = interaction.user.name,
+            url = interaction.user.jump_url,
+            icon_url = interaction.user.avatar.url
+            )
+        await log_channel.send(embed = log_embed)
 
 class SetMaxHitsModal(discord.ui.Modal):
-    def __init__(self, member):
+    def __init__(self, member: discord.Member, bot: discord.Bot):
         super().__init__(title = "Установить максимальные хиты")
         self.member = member
         self.timeout = None
-        max_hits = cursor.execute(f"SELECT max_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
+        self.bot = bot
+        self.max_hits = cursor.execute(f"SELECT max_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         self.add_item(discord.ui.InputText(
             label = "Установка хитов авантюриста",
-            placeholder = max_hits
+            placeholder = self.max_hits
             ))
 
     async def callback(self, interaction):
@@ -248,7 +302,7 @@ class SetMaxHitsModal(discord.ui.Modal):
             embed = discord.Embed(
                 description = description_text_for_original_message,
                 colour = discord.Colour.orange()),
-            view = HitsSettingsView(self.member)
+            view = HitsSettingsView(self.member, self.bot)
             )
         await interaction.respond(
             embed = discord.Embed(
@@ -256,12 +310,25 @@ class SetMaxHitsModal(discord.ui.Modal):
                 colour = discord.Colour.green()),
             ephemeral = True
             )
+        log_channel = self.bot.get_channel(channel_log_hits_id)
+        log_embed = discord.Embed(
+            description = f"<:logs:1297268241105944788> `{interaction.user.name}` устанавливает `{self.member.name}` максимальные хиты.\n> {self.max_hits} -> {new_max_hits}",
+            colour = discord.Colour.blurple(),
+            timestamp = datetime.datetime.now()
+            )
+        log_embed.set_author(
+            name = interaction.user.name,
+            url = interaction.user.jump_url,
+            icon_url = interaction.user.avatar.url
+            )
+        await log_channel.send(embed = log_embed)
 
 class HitsSettingsView(discord.ui.View):
-    def __init__(self, member):
+    def __init__(self, member: discord.Member, bot: discord.Bot):
         super().__init__()
         self.member = member
         self.timeout = None
+        self.bot = bot
 
     @discord.ui.select(
         placeholder = "Выберите действие",
@@ -289,15 +356,15 @@ class HitsSettingsView(discord.ui.View):
     async def select_callback(self, select, interaction):
         choice = select.values[0]
         if choice == "reduce_hits":
-            await interaction.response.send_modal(ReduceHitsModal(self.member))
+            await interaction.response.send_modal(ReduceHitsModal(self.member, self.bot))
         if choice == "add_hits":
-            await interaction.response.send_modal(AddHitsModal(self.member))
+            await interaction.response.send_modal(AddHitsModal(self.member, self.bot))
         if choice == "set_now_hits":
-            await interaction.response.send_modal(SetNowHitsModal(self.member))
+            await interaction.response.send_modal(SetNowHitsModal(self.member, self.bot))
         if choice == "set_more_hits":
-            await interaction.response.send_modal(SetMoreHitsModal(self.member))
+            await interaction.response.send_modal(SetMoreHitsModal(self.member, self.bot))
         if choice == "set_max_hits":
-            await interaction.response.send_modal(SetMaxHitsModal(self.member))
+            await interaction.response.send_modal(SetMaxHitsModal(self.member, self.bot))
 
 class AddMemberView(discord.ui.View):
     def __init__(self, member):
@@ -349,7 +416,7 @@ class Hits(commands.Cog):
                     embed = discord.Embed(
                         description = description_text,
                         colour = discord.Colour.orange()),
-                    view = HitsSettingsView(member),
+                    view = HitsSettingsView(member, self.bot),
                     ephemeral = True
                     )
             else:

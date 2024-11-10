@@ -137,7 +137,7 @@ class AddHitsModal(discord.ui.Modal):
         log_embed = discord.Embed(
             description = f"<:logs:1297268241105944788> `{interaction.user.name}` добавляет `{self.member.name}` `{add_hits_amount}` хитов.\n> {self.now_hits} -> {new_now_hits}",
             colour = discord.Colour.blurple(),
-            timestamp = datetime.datetime.datetime.now()
+            timestamp = datetime.datetime.now()
             )
         log_embed.set_author(
             name = interaction.user.name,

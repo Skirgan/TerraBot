@@ -2,6 +2,7 @@ import discord
 from discord.ui import Button, View
 from discord.ext import commands
 from pycord.multicog import subcommand
+
 from config import moderator_role_id
 from .functions import autocomplete_party_names, kick_party_member, is_party_member
 from database import connection_parties as connection, cursor_parties as cursor

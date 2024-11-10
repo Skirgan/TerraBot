@@ -1,8 +1,8 @@
-﻿from math import e
-import discord
+﻿import discord
 from discord.ui import Button, View
 from discord.ext import commands
 from pycord.multicog import subcommand
+
 from config import moderator_role_id, channel_log_delete_id
 from .functions import autocomplete_mention_names
 from database import connection_mentions as connection, cursor_mentions as cursor

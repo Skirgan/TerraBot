@@ -1,8 +1,10 @@
 import datetime
+
 import discord
 from discord.ui import Button, View
 from discord.ext import commands
 from pycord.multicog import subcommand
+
 from config import master_role_id, administrator_role_id, channel_log_hits_id
 from database import connection_hits as connection, cursor_hits as cursor
 from .functions import is_master, create_hit_bar

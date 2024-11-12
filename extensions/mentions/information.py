@@ -27,14 +27,14 @@ class InformationMentions(commands.Cog):
         if check_mention_name.fetchone() is not None:
             mention_members = cursor.execute(f"SELECT members FROM mentions WHERE name = '{mention_name}'").fetchone()[0].split(".")
             mention_public = cursor.execute(f"SELECT public FROM mentions WHERE name = '{mention_name}'").fetchone()[0]
-            mention_public = "<:unblock:1297267969096810567> (публичная)" if mention_public == 1 else "<:block:1297268337264300094> (личная)"
+            mention_public = "<:unblock:1297267969096810567> `(публичная)`" if mention_public == 1 else "<:block:1297268337264300094> `(личная)`"
             text = ""
             for member in mention_members:
                 if member:
                     text += f"\n> <:member:1297268091197067396> <@!{member}>;"
                 else:
                     text += "\n> <:cross:1297268043667476490> Участники отсутствуют."
-            await ctx.respond(f"<:stats:1297268132666150993> Статистика рассылки `\"{mention_name}\"`:\n<:moderator:1297268117965377689> Статус: `{mention_public}`.\n<:members:1297268054840971265> Участники:{text[:-1]}.")
+            await ctx.respond(f"<:stats:1297268132666150993> Статистика рассылки `\"{mention_name}\"`:\n<:moderator:1297268117965377689> Статус: {mention_public}.\n<:members:1297268054840971265> Участники:{text[:-1]}.")
         else:
             await ctx.respond(f"<:cross:1297268043667476490> Такой рассылки не существует.")
 

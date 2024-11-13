@@ -6,6 +6,7 @@ from pycord.multicog import subcommand
 from config import master_role_id, administrator_role_id
 from database import connection_tasks as connection, cursor_tasks as cursor
 from .functions import is_master
+from enums import emojis
 
 class MasterCommands(commands.Cog):
     def __init__(self, bot):
@@ -29,19 +30,19 @@ class MasterCommands(commands.Cog):
             if member.get_role(role_id):
                 await member.remove_roles(role)
                 await ctx.respond(embed = discord.Embed(
-                    description = f"<:minus:1297268270126338120> Вы разорвали контракт задания с авантюристом {member.mention}",
+                    description = f"{emojis.minus} Вы разорвали контракт задания с авантюристом {member.mention}",
                     colour = discord.Colour.orange()))
             else:
                 await ctx.respond(
                     embed = discord.Embed(
-                        description = "<:cross:1297268043667476490> Авантюрист не исполняет ваше задание.",
+                        description = f"{emojis.cross} Авантюрист не исполняет ваше задание.",
                         colour = discord.Colour.red()),
                     ephemeral = True
                     )
         else:
             await ctx.respond(
                 embed = discord.Embed(
-                    description = "<:block:1297268337264300094> Вы не являетесь заказчиком какого-либо задания.",
+                    description = f"{emojis.block} Вы не являетесь заказчиком какого-либо задания.",
                     colour = discord.Colour.red()),
                 ephemeral = True
                 )
@@ -96,28 +97,28 @@ class MasterCommands(commands.Cog):
                     connection.commit()
                     await ctx.respond(
                         embed = discord.Embed(
-                            description = f"<:check:1297268217303007314> Задание помещено на доску объявлений, место сбора: {forum.mention}.\n -# Из-за технических проблем невозможно ограничить создание публикаций на форуме. Сделайте это вручную.",
+                            description = f"{emojis.check} Задание помещено на доску объявлений, место сбора: {forum.mention}.\n -# Из-за технических проблем невозможно ограничить создание публикаций на форуме. Сделайте это вручную.",
                             colour = discord.Colour.green()),
                         ephemeral = True
                         )
                 else:
                     await ctx.respond(
                         embed = discord.Embed(
-                            description = "<:cross:1297268043667476490> Задание на данном источнике уже существует.",
+                            description = f"{emojis.cross} Задание на данном источнике уже существует.",
                             colour = discord.Colour.red()),
                         ephemeral = True
                         )
             else:
                 await ctx.respond(
                     embed = discord.Embed(
-                        description = "<:block:1297268337264300094> Вы уже запросили исполнение одного задания.",
+                        description = f"{emojis.block} Вы уже запросили исполнение одного задания.",
                         colour = discord.Colour.red()),
                     ephemeral = True
                     )
         else:
             await ctx.respond(
                 embed = discord.Embed(
-                    description = "<:block:1297268337264300094> Вы не являетесь сеньором.",
+                    description = f"{emojis.block} Вы не являетесь сеньором.",
                     colour = discord.Colour.red()),
                 ephemeral = True
                 )
@@ -142,24 +143,24 @@ class MasterCommands(commands.Cog):
                 connection.commit()
                 await ctx.respond(
                     embed = discord.Embed(
-                        description = f"<:check:1297268217303007314> Задание помещено в очередь сожжения.",
+                        description = f"{emojis.check} Задание помещено в очередь сожжения.",
                         colour = discord.Colour.green()),
                     ephemeral = True
                     )
                 await ctx.send(f"<@&{administrator_role_id}>", embed = discord.Embed(
-                    description = f"<:secure:1297268147363123200> Поступил запрос на удаление задания \"`{name}`\".\nКанал задания: <#{forum_id}>.\nУбедитесь, что запрос не является ложным, после чего архивируйте роль и форум.",
+                    description = f"{emojis.secure} Поступил запрос на удаление задания \"`{name}`\".\nКанал задания: <#{forum_id}>.\nУбедитесь, что запрос не является ложным, после чего архивируйте роль и форум.",
                     colour = discord.Colour(value = 0)))
             else:
                 await ctx.respond(
                     embed = discord.Embed(
-                        description = "<:block:1297268337264300094> Вы ещё не запрашивали исполнение какого-либо задания.",
+                        description = f"{emojis.block} Вы ещё не запрашивали исполнение какого-либо задания.",
                         colour = discord.Colour.red()),
                     ephemeral = True
                     )
         else:
             await ctx.respond(
                 embed = discord.Embed(
-                    description = "<:block:1297268337264300094> Вы не являетесь сеньором.",
+                    description = f"{emojis.block} Вы не являетесь сеньором.",
                     colour = discord.Colour.red()),
                 ephemeral = True
                 )

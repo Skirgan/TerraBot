@@ -4,6 +4,7 @@ from discord.ext import commands
 
 from config import administrator_role_id
 from database import connection_tasks as connection, cursor_tasks as cursor
+from enums import emojis
 
 class TaskView(discord.ui.View):
     def __init__(self, position):
@@ -12,7 +13,7 @@ class TaskView(discord.ui.View):
 
     @discord.ui.button(label = "Принять задание",
                        style = discord.ButtonStyle.green,
-                       emoji = "<:like:1297268354570260611>")
+                       emoji = f"{emojis.like}")
     async def accept_callback(self, button, interaction):
         role_id = cursor.execute(f"SELECT role_id FROM tasks WHERE position = {self.position}").fetchone()[0]
         role = interaction.guild.get_role(role_id)
@@ -22,7 +23,7 @@ class TaskView(discord.ui.View):
         else:
             await interaction.respond(
                 embed = discord.Embed(
-                    description = "<:cross:1297268043667476490> Вы уже приняли это задание.",
+                    description = f"{emojis.cross} Вы уже приняли это задание.",
                     colour = discord.Colour.red()),
                 ephemeral = True
                 )
@@ -128,7 +129,7 @@ class Callboard(commands.Cog):
         await ctx.defer(ephemeral = True)
 
         if ctx.author.get_role(administrator_role_id):
-            await ctx.respond("<:staff:1297268197581520926> Публикую доску объявлений.")
+            await ctx.respond(f"{emojis.staff} Публикую доску объявлений.")
             callboard = await ctx.send(
                 embed = discord.Embed(
                     description = "*Вы подходите к доске объявлений, что до тошноты сделана идеально всеми теми мастерами, которые выделывали сей табель и дополняли тот своим материалом. Было трудно ожидать нечто иное от тщеславного дома Вокма, что опутал своей гильдией весь континент. Что ж, работа у них найдётся для каждого, а посему вам остаётся лишь выбрать, где прольётся ваша кровь в погоне за звонкой монетой.*",
@@ -136,7 +137,7 @@ class Callboard(commands.Cog):
                 view = CallboardView()
                 )
         else:
-            await ctx.respond(f"<:block:1297268337264300094> Вы не являетесь лордом.")
+            await ctx.respond(f"{emojis.cross} Вы не являетесь лордом.")
 
 def setup(bot):
     bot.add_cog(Callboard(bot))

@@ -6,6 +6,7 @@ import os
 from colorama import init, Fore, Style
 from extensions import *
 from config import token, administrator_role_id
+from enums import emojis
 
 intents = discord.Intents.default()
 intents = discord.Intents.all()
@@ -80,13 +81,13 @@ class AdminSettings(commands.Cog):
         if ctx.author.get_role(administrator_role_id):
             response = await ctx.respond(embed = discord.Embed(
                 colour = discord.Colour.blurple(),
-                description = f"<:staff:1297268197581520926> Приступаю к загрузке \"`{cog_path}`\"."
+                description = f"{emojis.staff} Приступаю к загрузке \"`{cog_path}`\"."
                 ))
             try:
                 bot.load_extension(cog_path)
                 response_embed = discord.Embed(
                     colour = discord.Colour.green(),
-                    description = f"<:check:1297268217303007314> \"`{cog_path}`\" загружен. "
+                    description = f"{emojis.check} \"`{cog_path}`\" загружен. "
                     )
                 response_embed.add_field(
                     name = "Подключённые команды:",
@@ -96,10 +97,10 @@ class AdminSettings(commands.Cog):
             except Exception as e:
                 await response.edit(embed = discord.Embed(
                     colour = discord.Colour.red(),
-                    description = f"<:cross:1297268043667476490> `{e}`"
+                    description = f"{emojis.cross} `{e}`"
                     ))
         else:
-            await ctx.respond(f"<:block:1297268337264300094> Вы не являетесь администратором.")
+            await ctx.respond(f"{emojis.block} Вы не являетесь администратором.")
 
     @settings.command(name = "unload")
     async def unload_cog(
@@ -115,13 +116,13 @@ class AdminSettings(commands.Cog):
         if ctx.author.get_role(administrator_role_id):
             response = await ctx.respond(embed = discord.Embed(
                 colour = discord.Colour.blurple(),
-                description = f"<:staff:1297268197581520926> Приступаю к загрузке \"`{cog_path}`\"."
+                description = f"{emojis.staff} Приступаю к загрузке \"`{cog_path}`\"."
                 ))
             try:
                 bot.unload_extension(cog_path)
                 response_embed = discord.Embed(
                     colour = discord.Colour.green(),
-                    description = f"<:check:1297268217303007314> \"`{cog_path}`\" отгружен. "
+                    description = f"{emojis.check} \"`{cog_path}`\" отгружен. "
                     )
                 response_embed.add_field(
                     name = "Подключённые команды:",
@@ -131,10 +132,10 @@ class AdminSettings(commands.Cog):
             except Exception as e:
                 await response.edit(embed = discord.Embed(
                     colour = discord.Colour.red(),
-                    description = f"<:cross:1297268043667476490> `{e}`"
+                    description = f"{emojis.cross} `{e}`"
                     ))
         else:
-            await ctx.respond(f"<:block:1297268337264300094> Вы не являетесь администратором.")
+            await ctx.respond(f"{emojis.block} Вы не являетесь администратором.")
 
     @settings.command(name = "reload")
     async def reload_cog(
@@ -150,14 +151,14 @@ class AdminSettings(commands.Cog):
         if ctx.author.get_role(administrator_role_id):
             response = await ctx.respond(embed = discord.Embed(
                 colour = discord.Colour.blurple(),
-                description = f"<:staff:1297268197581520926> Приступаю к загрузке \"`{cog_path}`\"."
+                description = f"{emojis.staff} Приступаю к загрузке \"`{cog_path}`\"."
                 ))
             try:
                 bot.unload_extension(cog_path)
                 bot.load_extension(cog_path)
                 response_embed = discord.Embed(
                     colour = discord.Colour.green(),
-                    description = f"<:check:1297268217303007314> \"`{cog_path}`\" перезагружен. "
+                    description = f"{emojis.check} \"`{cog_path}`\" перезагружен. "
                     )
                 response_embed.add_field(
                     name = "Подключённые команды:",
@@ -167,10 +168,10 @@ class AdminSettings(commands.Cog):
             except Exception as e:
                 await response.edit(embed = discord.Embed(
                     colour = discord.Colour.red(),
-                    description = f"<:cross:1297268043667476490> `{e}`"
+                    description = f"{emojis.cross} `{e}`"
                     ))
         else:
-            await ctx.respond(f"<:block:1297268337264300094> Вы не являетесь администратором.")
+            await ctx.respond(f"{emojis.block} Вы не являетесь администратором.")
 
 bot.add_cog(AdminSettings(bot))
 bot.run(token)

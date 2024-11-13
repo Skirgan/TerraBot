@@ -7,7 +7,7 @@ class EmojiModes(enum.Enum):
     none = 3
 
 # Прошу соблюдать либо алфавитный, либо числовой порядок в названиях аттрибутов.
-class TerraBotEmojis(enum.Enum):
+class TerraBotEmojis():
     administrator = "<:administrator:1297268078375080036>"
     block = "<:block:1297268337264300094>"
     check = "<:check:1297268217303007314>"
@@ -46,7 +46,7 @@ class TerraBotEmojis(enum.Enum):
     eight = "<:8n:1304563460201513141>"
     nine = "<:9n:1304563470032699412>"
 
-class Placeholders(enum.Enum):
+class Placeholders():
     administrator = ":cool:"
     block = ":cool:"
     check = ":cool:"
@@ -85,7 +85,7 @@ class Placeholders(enum.Enum):
     eight = ":cool:"
     nine = ":cool:"
 
-class NoEmojis(enum.Enum):
+class NoEmojis():
     administrator = ""
     block = ""
     check = ""

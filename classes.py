@@ -138,10 +138,10 @@ class NoEmojis:
 
 # Инициализация эмодзи в соответствии с конфигом.
 if emoji_mode == EmojiModes.terra_bot:
-    emojis = TerraBotEmojis
+    emojis = TerraBotEmojis()
 
 elif emoji_mode == EmojiModes.placeholder:
-    emojis = Placeholders
+    emojis = Placeholders()
 
 elif emoji_mode == EmojiModes.none:
-    emojis = NoEmojis
+    emojis = NoEmojis()

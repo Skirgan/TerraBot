@@ -52,15 +52,15 @@ class SettingsView(discord.ui.View):
             discord.SelectOption(
                 label = "Изменить название",
                 value = "change_name",
-                emoji = "<:write:1297267979402084402>"),
+                emoji = emojis.write),
             discord.SelectOption(
                 label = "Изменить публичность",
                 value = "change_public",
-                emoji = "<:moderator:1297268117965377689>"),
+                emoji = emojis.moderator),
             discord.SelectOption(
                 label = "Изменить владельца",
                 value = "change_owner",
-                emoji = "<:administrator:1297268078375080036>")])
+                emoji = emojis.administrator)])
     async def select_callback(self, select, interaction):
         choice = select.values[0]
         if choice == "change_name":
@@ -75,7 +75,7 @@ class SettingsView(discord.ui.View):
             if mention_public == 0:
                 cursor.execute(f"UPDATE mentions SET public = 1 WHERE name = '{self.mention_name}'")
                 connection.commit()
-                await interaction.respond(f"<:unblock:1297267969096810567> Вы сделали рассылку `\"{self.mention_name}\"` публичной.", ephemeral = True)
+                await interaction.respond(f"{emojis.unblock} Вы сделали рассылку `\"{self.mention_name}\"` публичной.", ephemeral = True)
         if choice == "change_owner":
             await interaction.response.edit_message(view = MentionOwnerView(self.mention_name))
 
@@ -99,7 +99,7 @@ class SettingsMentions(commands.Cog):
         check_mention_name = cursor.execute(f"SELECT * FROM mentions WHERE name = '{mention_name}'")
         if check_mention_name.fetchone() is not None:
             if ctx.author.id == cursor.execute(f"SELECT owner_id FROM mentions WHERE name = '{mention_name}'").fetchone()[0] or ctx.author.get_role(moderator_role_id) is not None:
-                await ctx.respond("<:manage:1297268323200929842> Выберите, какой именно параметр вы желаете изменить.", view = SettingsView(mention_name))
+                await ctx.respond(f"{emojis.manage} Выберите, какой именно параметр вы желаете изменить.", view = SettingsView(mention_name))
             else:
                 await ctx.respond(f"{emojis.block} Вы не являетесь владельцем рассылки.")
         else:

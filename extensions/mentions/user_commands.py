@@ -117,7 +117,7 @@ class UserCommandsMentions(commands.Cog):
                                 if mention_text is None:
                                     await dm.send(f"{emojis.mail} Пользователь {ctx.author.mention} позвал вас в {ctx.channel.mention} через рассылку `\"{mention_name}\"`.")
                                 else:
-                                    await dm.send(f"{emojis.mail} Пользователь {ctx.author.mention} позвал вас в {ctx.channel.mention} через рассылку `\"{mention_name}\"`.\n<:logs:1297268241105944788> Текст от упомянувшего:\n> {mention_text}")
+                                    await dm.send(f"{emojis.mail} Пользователь {ctx.author.mention} позвал вас в {ctx.channel.mention} через рассылку `\"{mention_name}\"`.\n{emojis.logs} Текст от упомянувшего:\n> {mention_text}")
                                 messages_count += 1
                             except:
                                 pass

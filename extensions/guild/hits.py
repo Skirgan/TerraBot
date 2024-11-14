@@ -30,12 +30,14 @@ class ReduceHitsModal(discord.ui.Modal):
         try:
             reduce_hits_amount = int(self.children[0].value)
         except:
-            await ctx.respond(
+            await interaction.response.edit_message(view = HitsSettingsView(self.member, self.bot))
+            await interaction.respond(
                 embed = discord.Embed(
                     description = "<:cross:1297268043667476490> Лорд Ао разочарован, что разумная жизнь не была уничтожена в ходе Низвержения.",
                     colour = discord.Colour.red()),
                 ephemeral = True
                 )
+            return
         if cursor.execute(f"SELECT more_hits FROM hits WHERE id = {self.member.id}").fetchone() is None:
             new_now_hits = self.now_hits - reduce_hits_amount
             new_more_hits = 0
@@ -104,12 +106,14 @@ class AddHitsModal(discord.ui.Modal):
         try:
             add_hits_amount = int(self.children[0].value)
         except:
-            await ctx.respond(
+            await interaction.response.edit_message(view = HitsSettingsView(self.member, self.bot))
+            await interaction.respond(
                 embed = discord.Embed(
                     description = "<:cross:1297268043667476490> Лорд Ао разочарован, что разумная жизнь не была уничтожена в ходе Низвержения.",
                     colour = discord.Colour.red()),
                 ephemeral = True
                 )
+            return
         max_hits = cursor.execute(f"SELECT max_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         new_now_hits = self.now_hits + add_hits_amount
         if new_now_hits > max_hits:
@@ -164,12 +168,14 @@ class SetNowHitsModal(discord.ui.Modal):
         try:
             set_now_hits_amount = int(self.children[0].value)
         except:
-            await ctx.respond(
+            await interaction.response.edit_message(view = HitsSettingsView(self.member, self.bot))
+            await interaction.respond(
                 embed = discord.Embed(
                     description = "<:cross:1297268043667476490> Лорд Ао разочарован, что разумная жизнь не была уничтожена в ходе Низвержения.",
                     colour = discord.Colour.red()),
                 ephemeral = True
                 )
+            return
         max_hits = cursor.execute(f"SELECT max_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         more_hits = cursor.execute(f"SELECT more_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         new_now_hits = set_now_hits_amount
@@ -223,12 +229,14 @@ class SetMoreHitsModal(discord.ui.Modal):
         try:
             set_more_hits_amount = int(self.children[0].value)
         except:
-            await ctx.respond(
+            await interaction.response.edit_message(view = HitsSettingsView(self.member, self.bot))
+            await interaction.respond(
                 embed = discord.Embed(
                     description = "<:cross:1297268043667476490> Лорд Ао разочарован, что разумная жизнь не была уничтожена в ходе Низвержения.",
                     colour = discord.Colour.red()),
                 ephemeral = True
                 )
+            return
         max_hits = cursor.execute(f"SELECT max_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         now_hits = cursor.execute(f"SELECT now_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         new_more_hits = set_more_hits_amount
@@ -282,12 +290,14 @@ class SetMaxHitsModal(discord.ui.Modal):
         try:
             set_max_hits_amount = int(self.children[0].value)
         except:
-            await ctx.respond(
+            await interaction.response.edit_message(view = HitsSettingsView(self.member, self.bot))
+            await interaction.respond(
                 embed = discord.Embed(
                     description = "<:cross:1297268043667476490> Лорд Ао разочарован, что разумная жизнь не была уничтожена в ходе Низвержения.",
                     colour = discord.Colour.red()),
                 ephemeral = True
                 )
+            return
         now_hits = cursor.execute(f"SELECT now_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         more_hits = cursor.execute(f"SELECT more_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
         new_max_hits = set_max_hits_amount

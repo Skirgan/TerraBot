@@ -31,7 +31,7 @@ class ReduceHitsModal(discord.ui.Modal):
         try:
             reduce_hits_amount = int(self.children[0].value)
         except ValueError:
-            await ctx.respond(
+            await interaction.respond(
                 embed = discord.Embed(
                     description = f"{emojis.cross} Лорд Ао разочарован, что разумная жизнь не была уничтожена в ходе Низвержения.",
                     colour = discord.Colour.red()),
@@ -106,7 +106,7 @@ class AddHitsModal(discord.ui.Modal):
         try:
             add_hits_amount = int(self.children[0].value)
         except ValueError:
-            await ctx.respond(
+            await interaction.respond(
                 embed = discord.Embed(
                     description = f"{emojis.cross} Лорд Ао разочарован, что разумная жизнь не была уничтожена в ходе Низвержения.",
                     colour = discord.Colour.red()),
@@ -167,7 +167,7 @@ class SetNowHitsModal(discord.ui.Modal):
         try:
             set_now_hits_amount = int(self.children[0].value)
         except ValueError:
-            await ctx.respond(
+            await interaction.respond(
                 embed = discord.Embed(
                     description = f"{emojis.cross} Лорд Ао разочарован, что разумная жизнь не была уничтожена в ходе Низвержения.",
                     colour = discord.Colour.red()),
@@ -227,7 +227,7 @@ class SetMoreHitsModal(discord.ui.Modal):
         try:
             set_more_hits_amount = int(self.children[0].value)
         except ValueError:
-            await ctx.respond(
+            await interaction.respond(
                 embed = discord.Embed(
                     description = f"{emojis.cross} Лорд Ао разочарован, что разумная жизнь не была уничтожена в ходе Низвержения.",
                     colour = discord.Colour.red()),
@@ -287,7 +287,7 @@ class SetMaxHitsModal(discord.ui.Modal):
         try:
             set_max_hits_amount = int(self.children[0].value)
         except ValueError:
-            await ctx.respond(
+            await interaction.respond(
                 embed = discord.Embed(
                     description = f"{emojis.cross} Лорд Ао разочарован, что разумная жизнь не была уничтожена в ходе Низвержения.",
                     colour = discord.Colour.red()),

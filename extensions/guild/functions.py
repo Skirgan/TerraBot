@@ -1,30 +1,28 @@
 from config import master_role_id
-from classes import emojis
 
 def is_master(ctx):
 	return ctx.author.get_role(master_role_id) is not None
 
 def create_hit_bar(now_hits: int, more_hits: int, max_hits: int):
-	# Нет, мне лень стирать кавычки.
 	symbols_dict_now_hits = {
-		"1l": f"{emojis.one_l}",
-		"1p": f"{emojis.one_p}",
-		"1r": f"{emojis.one_r}",
-		"0l": f"{emojis.zero_l}",
-		"0p": f"{emojis.zero_p}",
-		"0r": f"{emojis.zero_r}"
+		"1l": "<:1l:1304560712126824478>",
+		"1p": "<:1p:1304560732695695360>",
+		"1r": "<:1r:1304560721303965766>",
+		"0l": "<:0l:1304560675787509811>",
+		"0p": "<:0p:1304560694775119994>",
+		"0r": "<:0r:1304560685459443712>"
 		}
 	symbols_dict_more_hits = {
-		"0": f"{emojis.zero}",
-		"1": f"{emojis.one}",
-		"2": f"{emojis.two}",
-		"3": f"{emojis.three}",
-		"4": f"{emojis.four}",
-		"5": f"{emojis.five}",
-		"6": f"{emojis.six}",
-		"7": f"{emojis.seven}",
-		"8": f"{emojis.eight}",
-		"9": f"{emojis.nine}"
+		"0": "<:0n:1304563382984376371>",
+		"1": "<:1n:1304563392043814922>",
+		"2": "<:2n:1304563403875942400>",
+		"3": "<:3n:1304563414546382888>",
+		"4": "<:4n:1304563422985191464>",
+		"5": "<:5n:1304563435157323988>",
+		"6": "<:6n:1304563443033968701>",
+		"7": "<:7n:1304563451594539148>",
+		"8": "<:8n:1304563460201513141>",
+		"9": "<:9n:1304563470032699412>"
 		}
 	bar_segment = max_hits / 10
 	if now_hits <= max_hits:

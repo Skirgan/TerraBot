@@ -4,7 +4,6 @@ from discord.ext import commands
 
 from .functions import autocomplete_mention_names
 from database import connection_mentions as connection, cursor_mentions as cursor
-from classes import emojis
 
 class CreateAndDeleteMentions(commands.Cog):
     def __init__(self, bot):
@@ -38,30 +37,30 @@ class CreateAndDeleteMentions(commands.Cog):
             button_support = Button(
                 label = "Поддержать",
                 style = discord.ButtonStyle.success,
-                emoji = emojis.like
+                emoji = "<:like:1297268354570260611>"
                 )
             create_mention_view = View()
             create_mention_view.add_item(button_support)
 
             async def button_support_callback(interaction):
                 if ctx.author != interaction.user:
-                    await ctx.respond(f"{emojis.like} Вас поддержал {interaction.user.mention}!", ephemeral = True)
+                    await ctx.respond(f"<:like:1297268354570260611> Вас поддержал {interaction.user.mention}!", ephemeral = True)
                     supported.append(str(interaction.user.id))
                     if len(supported) >= 0:
                         await interaction.message.delete()
                         start_members = f"{'.'.join(supported)}"
                         cursor.execute(f"INSERT INTO mentions VALUES ('{mention_name}', {ctx.author.id}, '{start_members}', {mention_public})")
                         connection.commit()
-                        await ctx.respond(f"{emojis.manage} {ctx.author.mention} создал рассылку.\n-# Название: `{mention_name}`")
+                        await ctx.respond(f"<:manage:1297268323200929842> {ctx.author.mention} создал рассылку.\n-# Название: `{mention_name}`")
                 else:
-                    await interaction.respond(f"{emojis.cross} Вы не можете поддержать сами себя!", ephemeral = True)
+                    await interaction.respond(f"<:cross:1297268043667476490> Вы не можете поддержать сами себя!", ephemeral = True)
 
             button_support.callback = button_support_callback
 
-            await ctx.respond(f"{emojis.mute} Дождитесь, пока как минимум `2` человека поддержат вас в создании рассылки!")
-            support_message = await ctx.send(f"{emojis.plus} {ctx.author.mention} желает создать рассылку `\"{mention_name}\"`. Нажмите на кнопку ниже, чтобы поддержать его!", view = create_mention_view)
+            await ctx.respond("<:mute:1297267954022617279> Дождитесь, пока как минимум `2` человека поддержат вас в создании рассылки!")
+            support_message = await ctx.send(f"<:plus:1297268385863700603> {ctx.author.mention} желает создать рассылку `\"{mention_name}\"`. Нажмите на кнопку ниже, чтобы поддержать его!", view = create_mention_view)
         else:
-            await ctx.respond(f"{emojis.cross} Рассылка с таким названием уже существует.")
+            await ctx.respond(f"<:cross:1297268043667476490> Рассылка с таким названием уже существует.")
 
     @mentions.command(name = "удалить_рассылку")
     async def mentions_delete(
@@ -80,11 +79,11 @@ class CreateAndDeleteMentions(commands.Cog):
             if ctx.author.id == cursor.execute(f"SELECT author_id FROM mentions WHERE name = '{mention_name}'").fetchone()[0]:
                 cursor.execute(f"DELETE FROM mentions WHERE name = '{mention_name}'")
                 connection.commit()
-                await ctx.respond(f"{emojis.delete} Рассылка \"`{mention_name}`\" была удалена.")
+                await ctx.respond(f"<:delete:1297268016827858954> Рассылка \"`{mention_name}`\" была удалена.")
             else:
-                await ctx.respond(f"{emojis.block} Вы не являетесь создателем рассылки.")
+                await ctx.respond(f"<:block:1297268337264300094> Вы не являетесь создателем рассылки.")
         else:
-            await ctx.respond(f"{emojis.cross} Такой рассылки не существует.")
+            await ctx.respond(f"<:cross:1297268043667476490> Такой рассылки не существует.")
 
 def setup(bot):
     bot.add_cog(CreateAndDeleteMentions(bot))

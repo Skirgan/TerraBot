@@ -6,7 +6,8 @@ from pycord.multicog import subcommand
 from config import moderator_role_id
 from .functions import autocomplete_party_names, kick_party_member, is_party_member
 from database import connection_parties as connection, cursor_parties as cursor
-from classes import emojis
+from main import emojis
+
 
 class PartyOwnerView(discord.ui.View):
     def __init__(self, party_name):
@@ -17,13 +18,14 @@ class PartyOwnerView(discord.ui.View):
         placeholder = "Выберите нового организатора группы."
         )
     async def user_select_callback(self, select, interaction):
-        category = discord.utils.get(ctx.guild.categories, id = cursor.execute(f"SELECT category_id FROM parties WHERE name = '{party_name}'").fetchone()[0])
+        print(select)
+        category = discord.utils.get(interaction.guild.categories, id = cursor.execute(f"SELECT category_id FROM parties WHERE name = '{party_name}'").fetchone()[0])
         await category.set_permissions(
-            target = ctx.author,
+            target = interaction.author,
             overwrite = None
             )
         await category.set_permissions(
-            target = member,
+            target = select[0] if select is not None else None,
             view_channel = True,
             manage_channels = True,
             manage_permissions = True

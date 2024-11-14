@@ -5,7 +5,8 @@ from pycord.multicog import subcommand
 
 from .functions import autocomplete_mention_names
 from database import connection_mentions as connection, cursor_mentions as cursor
-from classes import emojis
+from main import emojis
+
 
 class InformationMentions(commands.Cog):
     def __init__(self, bot):
@@ -62,7 +63,7 @@ class InformationMentions(commands.Cog):
                 mention_name = mention_name[0]
                 owner_id = cursor.execute(f"SELECT owner_id FROM mentions WHERE name = '{mention_name}'").fetchone()[0]
                 try:
-                    members_count = len(cursor.execute(f"SELECT members FROM mentions WHERE name = '{party_name}'").fetchone()[0].split(".").remove(""))
+                    members_count = len(cursor.execute(f"SELECT members FROM mentions WHERE name = '{mention_name}'").fetchone()[0].split(".").remove(""))
                 except Exception:
                     members_count = 0
                 text_for_add = f"{emojis.profile} Название: {mention_name};\n{emojis.administrator} Владелец: {ctx.guild.get_member(owner_id)};\n{emojis.members} Количество подписавшихся: {members_count}.```\n"

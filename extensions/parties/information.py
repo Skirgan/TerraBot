@@ -3,7 +3,7 @@ from discord.ui import Button, View
 from discord.ext import commands
 from pycord.multicog import subcommand
 
-from classes import emojis
+from main import emojis
 from .functions import autocomplete_party_names
 from database import connection_parties as connection, cursor_parties as cursor
 

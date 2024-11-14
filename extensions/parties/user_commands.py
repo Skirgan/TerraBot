@@ -5,7 +5,8 @@ from pycord.multicog import subcommand
 
 from .functions import autocomplete_party_names, kick_party_member, is_party_member
 from database import connection_parties as connection, cursor_parties as cursor
-from classes import emojis
+from main import emojis
+
 
 class UserCommandsParties(commands.Cog):
     def __init__(self, bot):

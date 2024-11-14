@@ -6,7 +6,8 @@ from pycord.multicog import subcommand
 from config import moderator_role_id, channel_log_delete_id
 from .functions import autocomplete_mention_names
 from database import connection_mentions as connection, cursor_mentions as cursor
-from classes import emojis
+from main import emojis
+
 
 class MentionNameModal(discord.ui.Modal):
     def __init__(self, mention_name):

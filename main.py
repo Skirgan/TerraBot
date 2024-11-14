@@ -4,10 +4,12 @@ from discord.ext import commands
 from pycord.multicog import Bot
 import os
 from colorama import init, Fore, Style
-from extensions import *
+
+from classes import TerraBotEmojis
 from config import administrator_role_id
-from token import token
-from classes import emojis
+from token_file import token
+from classes import EmojiModes, TerraBotEmojis, Placeholders, NoEmojis
+from config import emoji_mode
 
 intents = discord.Intents.default()
 intents = discord.Intents.all()
@@ -16,6 +18,17 @@ bot.auto_sync_commands = False
 
 @bot.event
 async def on_ready():
+    # Инициализация эмодзи в соответствии с конфигом.
+    global emojis
+    if emoji_mode == EmojiModes.terra_bot:
+        emojis = TerraBotEmojis()
+
+    elif emoji_mode == EmojiModes.placeholder:
+        emojis = Placeholders()
+
+    elif emoji_mode == EmojiModes.none:
+        emojis = NoEmojis()
+
     black_list_files = ["__init__.py", "functions.py"]
     for directory, directories, files in os.walk("./extensions"):
         for file in os.listdir(directory):

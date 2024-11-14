@@ -1,5 +1,5 @@
 # Игнорируем файлы базы данных
 .idea
-token.py
+token_file.py
 *.db
 __pycache__

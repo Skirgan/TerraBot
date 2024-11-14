@@ -1,5 +1,5 @@
 import enum
-from config import emoji_mode
+
 
 class EmojiModes(enum.Enum):
     terra_bot = 1
@@ -136,12 +136,4 @@ class NoEmojis:
     eight = ""
     nine = ""
 
-# Инициализация эмодзи в соответствии с конфигом.
-if emoji_mode == EmojiModes.terra_bot:
-    emojis = TerraBotEmojis()
 
-elif emoji_mode == EmojiModes.placeholder:
-    emojis = Placeholders()
-
-elif emoji_mode == EmojiModes.none:
-    emojis = NoEmojis()

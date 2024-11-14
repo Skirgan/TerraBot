@@ -37,52 +37,53 @@ class ReduceHitsModal(discord.ui.Modal):
                     colour = discord.Colour.red()),
                 ephemeral = True
                 )
-        if cursor.execute(f"SELECT more_hits FROM hits WHERE id = {self.member.id}").fetchone() is None:
-            new_now_hits = self.now_hits - reduce_hits_amount
-            new_more_hits = 0
         else:
-            new_more_hits = self.more_hits - reduce_hits_amount
-            if new_more_hits < 0:
+            if cursor.execute(f"SELECT more_hits FROM hits WHERE id = {self.member.id}").fetchone() is None:
+                new_now_hits = self.now_hits - reduce_hits_amount
                 new_more_hits = 0
-            new_now_hits = self.now_hits - reduce_hits_amount + self.more_hits
-        if new_now_hits < 0:
-            new_now_hits = 0
-        cursor.execute(f"UPDATE hits SET now_hits = '{new_now_hits}' WHERE id = {self.member.id}")
-        if new_more_hits != self.more_hits:
-            cursor.execute(f"UPDATE hits SET more_hits = '{new_more_hits}' WHERE id = {self.member.id}")
-        connection.commit()
-        max_hits = cursor.execute(f"SELECT max_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
-        if new_more_hits > 0:
-            description_text_for_response = f"{emojis.check} Авантюрист понёс урон в размере {reduce_hits_amount} хитов. Теперь у него {new_now_hits} + {new_more_hits} хитов."
-            description_text_for_original_message = f"{emojis.manage} У авантюриста {self.member.mention} {new_now_hits} + {new_more_hits} / {max_hits} хитов."
-        else:
-            description_text_for_response = f"{emojis.check} Авантюрист понёс урон в размере {reduce_hits_amount} хитов. Теперь у него {new_now_hits} хитов."
-            description_text_for_original_message = f"{emojis.manage} У авантюриста {self.member.mention} {new_now_hits} / {max_hits} хитов."
-        description_text_for_original_message += f"\n\n{create_hit_bar(new_now_hits, new_more_hits, max_hits)}"
-        await interaction.response.edit_message(
-            embed = discord.Embed(
-                description = description_text_for_original_message,
-                colour = discord.Colour.orange()),
-            view = HitsSettingsView(self.member, self.bot)
-            )
-        await interaction.respond(
-            embed = discord.Embed(
-                description = description_text_for_response,
-                colour = discord.Colour.green()),
-            ephemeral = True
-            )
-        log_channel = self.bot.get_channel(channel_log_hits_id)
-        log_embed = discord.Embed(
-            description = f"{emojis.logs} `{interaction.user.name}` отнимает у `{self.member.name}` `{reduce_hits_amount}` хитов.\n> {self.now_hits} -> {new_now_hits}",
-            colour = discord.Colour.blurple(),
-            timestamp = datetime.datetime.now()
-            )
-        log_embed.set_author(
-            name = interaction.user.name,
-            url = interaction.user.jump_url,
-            icon_url = interaction.user.avatar.url
-            )
-        await log_channel.send(embed = log_embed)
+            else:
+                new_more_hits = self.more_hits - reduce_hits_amount
+                if new_more_hits < 0:
+                    new_more_hits = 0
+                new_now_hits = self.now_hits - reduce_hits_amount + self.more_hits
+            if new_now_hits < 0:
+                new_now_hits = 0
+            cursor.execute(f"UPDATE hits SET now_hits = '{new_now_hits}' WHERE id = {self.member.id}")
+            if new_more_hits != self.more_hits:
+                cursor.execute(f"UPDATE hits SET more_hits = '{new_more_hits}' WHERE id = {self.member.id}")
+            connection.commit()
+            max_hits = cursor.execute(f"SELECT max_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
+            if new_more_hits > 0:
+                description_text_for_response = f"{emojis.check} Авантюрист понёс урон в размере {reduce_hits_amount} хитов. Теперь у него {new_now_hits} + {new_more_hits} хитов."
+                description_text_for_original_message = f"{emojis.manage} У авантюриста {self.member.mention} {new_now_hits} + {new_more_hits} / {max_hits} хитов."
+            else:
+                description_text_for_response = f"{emojis.check} Авантюрист понёс урон в размере {reduce_hits_amount} хитов. Теперь у него {new_now_hits} хитов."
+                description_text_for_original_message = f"{emojis.manage} У авантюриста {self.member.mention} {new_now_hits} / {max_hits} хитов."
+            description_text_for_original_message += f"\n\n{create_hit_bar(new_now_hits, new_more_hits, max_hits)}"
+            await interaction.response.edit_message(
+                embed = discord.Embed(
+                    description = description_text_for_original_message,
+                    colour = discord.Colour.orange()),
+                view = HitsSettingsView(self.member, self.bot)
+                )
+            await interaction.respond(
+                embed = discord.Embed(
+                    description = description_text_for_response,
+                    colour = discord.Colour.green()),
+                ephemeral = True
+                )
+            log_channel = self.bot.get_channel(channel_log_hits_id)
+            log_embed = discord.Embed(
+                description = f"{emojis.logs} `{interaction.user.name}` отнимает у `{self.member.name}` `{reduce_hits_amount}` хитов.\n> {self.now_hits} -> {new_now_hits}",
+                colour = discord.Colour.blurple(),
+                timestamp = datetime.datetime.now()
+                )
+            log_embed.set_author(
+                name = interaction.user.name,
+                url = interaction.user.jump_url,
+                icon_url = interaction.user.avatar.url
+                )
+            await log_channel.send(embed = log_embed)
 
 class AddHitsModal(discord.ui.Modal):
     def __init__(self, member: discord.Member, bot: discord.Bot):
@@ -111,43 +112,44 @@ class AddHitsModal(discord.ui.Modal):
                     colour = discord.Colour.red()),
                 ephemeral = True
                 )
-        max_hits = cursor.execute(f"SELECT max_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
-        new_now_hits = self.now_hits + add_hits_amount
-        if new_now_hits > max_hits:
-            new_now_hits = max_hits
-        cursor.execute(f"UPDATE hits SET now_hits = '{new_now_hits}' WHERE id = {self.member.id}")
-        connection.commit()
-        if self.more_hits > 0:
-            description_text_for_response = f"{emojis.check} Авантюрист излечил свои ранения в размере {add_hits_amount} хитов. Теперь у него {new_now_hits} + {self.more_hits} хитов."
-            description_text_for_original_message = f"{emojis.manage} У авантюриста {self.member.mention} {new_now_hits} + {self.more_hits} / {max_hits} хитов."
         else:
-            description_text_for_response = f"{emojis.check} Авантюрист излечил свои ранения в размере {add_hits_amount} хитов. Теперь у него {new_now_hits} хитов."
-            description_text_for_original_message = f"{emojis.manage} У авантюриста {self.member.mention} {new_now_hits} / {max_hits} хитов."
-        description_text_for_original_message += f"\n\n{create_hit_bar(new_now_hits, self.more_hits, max_hits)}"
-        await interaction.response.edit_message(
-            embed = discord.Embed(
-                description = description_text_for_original_message,
-                colour = discord.Colour.orange()),
-            view = HitsSettingsView(self.member, self.bot)
-            )
-        await interaction.respond(
-            embed = discord.Embed(
-                description = description_text_for_response,
-                colour = discord.Colour.green()),
-            ephemeral = True
-            )
-        log_channel = self.bot.get_channel(channel_log_hits_id)
-        log_embed = discord.Embed(
-            description = f"{emojis.logs} `{interaction.user.name}` добавляет `{self.member.name}` `{add_hits_amount}` хитов.\n> {self.now_hits} -> {new_now_hits}",
-            colour = discord.Colour.blurple(),
-            timestamp = datetime.datetime.now()
-            )
-        log_embed.set_author(
-            name = interaction.user.name,
-            url = interaction.user.jump_url,
-            icon_url = interaction.user.avatar.url
-            )
-        await log_channel.send(embed = log_embed)
+            max_hits = cursor.execute(f"SELECT max_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
+            new_now_hits = self.now_hits + add_hits_amount
+            if new_now_hits > max_hits:
+                new_now_hits = max_hits
+            cursor.execute(f"UPDATE hits SET now_hits = '{new_now_hits}' WHERE id = {self.member.id}")
+            connection.commit()
+            if self.more_hits > 0:
+                description_text_for_response = f"{emojis.check} Авантюрист излечил свои ранения в размере {add_hits_amount} хитов. Теперь у него {new_now_hits} + {self.more_hits} хитов."
+                description_text_for_original_message = f"{emojis.manage} У авантюриста {self.member.mention} {new_now_hits} + {self.more_hits} / {max_hits} хитов."
+            else:
+                description_text_for_response = f"{emojis.check} Авантюрист излечил свои ранения в размере {add_hits_amount} хитов. Теперь у него {new_now_hits} хитов."
+                description_text_for_original_message = f"{emojis.manage} У авантюриста {self.member.mention} {new_now_hits} / {max_hits} хитов."
+            description_text_for_original_message += f"\n\n{create_hit_bar(new_now_hits, self.more_hits, max_hits)}"
+            await interaction.response.edit_message(
+                embed = discord.Embed(
+                    description = description_text_for_original_message,
+                    colour = discord.Colour.orange()),
+                view = HitsSettingsView(self.member, self.bot)
+                )
+            await interaction.respond(
+                embed = discord.Embed(
+                    description = description_text_for_response,
+                    colour = discord.Colour.green()),
+                ephemeral = True
+                )
+            log_channel = self.bot.get_channel(channel_log_hits_id)
+            log_embed = discord.Embed(
+                description = f"{emojis.logs} `{interaction.user.name}` добавляет `{self.member.name}` `{add_hits_amount}` хитов.\n> {self.now_hits} -> {new_now_hits}",
+                colour = discord.Colour.blurple(),
+                timestamp = datetime.datetime.now()
+                )
+            log_embed.set_author(
+                name = interaction.user.name,
+                url = interaction.user.jump_url,
+                icon_url = interaction.user.avatar.url
+                )
+            await log_channel.send(embed = log_embed)
 
 class SetNowHitsModal(discord.ui.Modal):
     def __init__(self, member: discord.Member, bot: discord.Bot):
@@ -171,42 +173,43 @@ class SetNowHitsModal(discord.ui.Modal):
                     colour = discord.Colour.red()),
                 ephemeral = True
                 )
-        max_hits = cursor.execute(f"SELECT max_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
-        more_hits = cursor.execute(f"SELECT more_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
-        new_now_hits = set_now_hits_amount
-        cursor.execute(f"UPDATE hits SET now_hits = '{new_now_hits}' WHERE id = {self.member.id}")
-        connection.commit()
-        if more_hits > 0:
-            description_text_for_response = f"{emojis.check} Авантюристу установлено **{new_now_hits}** + {more_hits} хитов."
-            description_text_for_original_message = f" У авантюриста {self.member.mention} {new_now_hits} + {more_hits} / {max_hits} хитов."
         else:
-            description_text_for_response = f"{emojis.check} Авантюристу установлено **{new_now_hits}** хитов."
-            description_text_for_original_message = f"{emojis.check} У авантюриста {self.member.mention} {new_now_hits} / {max_hits} хитов."
-        description_text_for_original_message += f"\n\n{create_hit_bar(new_now_hits, more_hits, max_hits)}"
-        await interaction.response.edit_message(
-            embed = discord.Embed(
-                description = description_text_for_original_message,
-                colour = discord.Colour.orange()),
-            view = HitsSettingsView(self.member, self.bot)
-            )
-        await interaction.respond(
-            embed = discord.Embed(
-                description = description_text_for_response,
-                colour = discord.Colour.green()),
-            ephemeral = True
-            )
-        log_channel = self.bot.get_channel(channel_log_hits_id)
-        log_embed = discord.Embed(
-            description = f"{emojis.logs} `{interaction.user.name}` устанавливает `{self.member.name}` текущие хиты.\n> {self.now_hits} -> {new_now_hits}",
-            colour = discord.Colour.blurple(),
-            timestamp = datetime.datetime.now()
-            )
-        log_embed.set_author(
-            name = interaction.user.name,
-            url = interaction.user.jump_url,
-            icon_url = interaction.user.avatar.url
-            )
-        await log_channel.send(embed = log_embed)
+            max_hits = cursor.execute(f"SELECT max_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
+            more_hits = cursor.execute(f"SELECT more_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
+            new_now_hits = set_now_hits_amount
+            cursor.execute(f"UPDATE hits SET now_hits = '{new_now_hits}' WHERE id = {self.member.id}")
+            connection.commit()
+            if more_hits > 0:
+                description_text_for_response = f"{emojis.check} Авантюристу установлено **{new_now_hits}** + {more_hits} хитов."
+                description_text_for_original_message = f" У авантюриста {self.member.mention} {new_now_hits} + {more_hits} / {max_hits} хитов."
+            else:
+                description_text_for_response = f"{emojis.check} Авантюристу установлено **{new_now_hits}** хитов."
+                description_text_for_original_message = f"{emojis.check} У авантюриста {self.member.mention} {new_now_hits} / {max_hits} хитов."
+            description_text_for_original_message += f"\n\n{create_hit_bar(new_now_hits, more_hits, max_hits)}"
+            await interaction.response.edit_message(
+                embed = discord.Embed(
+                    description = description_text_for_original_message,
+                    colour = discord.Colour.orange()),
+                view = HitsSettingsView(self.member, self.bot)
+                )
+            await interaction.respond(
+                embed = discord.Embed(
+                    description = description_text_for_response,
+                    colour = discord.Colour.green()),
+                ephemeral = True
+                )
+            log_channel = self.bot.get_channel(channel_log_hits_id)
+            log_embed = discord.Embed(
+                description = f"{emojis.logs} `{interaction.user.name}` устанавливает `{self.member.name}` текущие хиты.\n> {self.now_hits} -> {new_now_hits}",
+                colour = discord.Colour.blurple(),
+                timestamp = datetime.datetime.now()
+                )
+            log_embed.set_author(
+                name = interaction.user.name,
+                url = interaction.user.jump_url,
+                icon_url = interaction.user.avatar.url
+                )
+            await log_channel.send(embed = log_embed)
 
 class SetMoreHitsModal(discord.ui.Modal):
     def __init__(self, member: discord.Member, bot: discord.Bot):
@@ -230,42 +233,43 @@ class SetMoreHitsModal(discord.ui.Modal):
                     colour = discord.Colour.red()),
                 ephemeral = True
                 )
-        max_hits = cursor.execute(f"SELECT max_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
-        now_hits = cursor.execute(f"SELECT now_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
-        new_more_hits = set_more_hits_amount
-        cursor.execute(f"UPDATE hits SET more_hits = '{new_more_hits}' WHERE id = {self.member.id}")
-        connection.commit()
-        if self.more_hits > 0:
-            description_text_for_response = f"{emojis.check} Авантюристу установлено {now_hits} + **{new_more_hits}** хитов."
-            description_text_for_original_message = f"{emojis.check} У авантюриста {self.member.mention} {now_hits} + {new_more_hits} / {max_hits} хитов."
         else:
-            description_text_for_response = f"{emojis.check} Авантюристу установлено {now_hits} хитов."
-            description_text_for_original_message = f"{emojis.check} У авантюриста {self.member.mention} {now_hits} / {max_hits} хитов."
-        description_text_for_original_message += f"\n\n{create_hit_bar(now_hits, new_more_hits, max_hits)}"
-        await interaction.response.edit_message(
-            embed = discord.Embed(
-                description = description_text_for_original_message,
-                colour = discord.Colour.orange()),
-            view = HitsSettingsView(self.member, self.bot)
-            )
-        await interaction.respond(
-            embed = discord.Embed(
-                description = description_text_for_response,
-                colour = discord.Colour.green()),
-            ephemeral = True
-            )
-        log_channel = self.bot.get_channel(channel_log_hits_id)
-        log_embed = discord.Embed(
-            description = f"{emojis.logs} `{interaction.user.name}` устанавливает `{self.member.name}` бонусные хиты.\n> {self.more_hits} -> {new_more_hits}",
-            colour = discord.Colour.blurple(),
-            timestamp = datetime.datetime.now()
-            )
-        log_embed.set_author(
-            name = interaction.user.name,
-            url = interaction.user.jump_url,
-            icon_url = interaction.user.avatar.url
-            )
-        await log_channel.send(embed = log_embed)
+            max_hits = cursor.execute(f"SELECT max_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
+            now_hits = cursor.execute(f"SELECT now_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
+            new_more_hits = set_more_hits_amount
+            cursor.execute(f"UPDATE hits SET more_hits = '{new_more_hits}' WHERE id = {self.member.id}")
+            connection.commit()
+            if self.more_hits > 0:
+                description_text_for_response = f"{emojis.check} Авантюристу установлено {now_hits} + **{new_more_hits}** хитов."
+                description_text_for_original_message = f"{emojis.check} У авантюриста {self.member.mention} {now_hits} + {new_more_hits} / {max_hits} хитов."
+            else:
+                description_text_for_response = f"{emojis.check} Авантюристу установлено {now_hits} хитов."
+                description_text_for_original_message = f"{emojis.check} У авантюриста {self.member.mention} {now_hits} / {max_hits} хитов."
+            description_text_for_original_message += f"\n\n{create_hit_bar(now_hits, new_more_hits, max_hits)}"
+            await interaction.response.edit_message(
+                embed = discord.Embed(
+                    description = description_text_for_original_message,
+                    colour = discord.Colour.orange()),
+                view = HitsSettingsView(self.member, self.bot)
+                )
+            await interaction.respond(
+                embed = discord.Embed(
+                    description = description_text_for_response,
+                    colour = discord.Colour.green()),
+                ephemeral = True
+                )
+            log_channel = self.bot.get_channel(channel_log_hits_id)
+            log_embed = discord.Embed(
+                description = f"{emojis.logs} `{interaction.user.name}` устанавливает `{self.member.name}` бонусные хиты.\n> {self.more_hits} -> {new_more_hits}",
+                colour = discord.Colour.blurple(),
+                timestamp = datetime.datetime.now()
+                )
+            log_embed.set_author(
+                name = interaction.user.name,
+                url = interaction.user.jump_url,
+                icon_url = interaction.user.avatar.url
+                )
+            await log_channel.send(embed = log_embed)
 
 class SetMaxHitsModal(discord.ui.Modal):
     def __init__(self, member: discord.Member, bot: discord.Bot):
@@ -289,42 +293,43 @@ class SetMaxHitsModal(discord.ui.Modal):
                     colour = discord.Colour.red()),
                 ephemeral = True
                 )
-        now_hits = cursor.execute(f"SELECT now_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
-        more_hits = cursor.execute(f"SELECT more_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
-        new_max_hits = set_max_hits_amount
-        cursor.execute(f"UPDATE hits SET max_hits = '{new_max_hits}' WHERE id = {self.member.id}")
-        connection.commit()
-        if more_hits > 0:
-            description_text_for_response = f"{emojis.check} Авантюристу установлено {new_max_hits} максммальных хитов."
-            description_text_for_original_message = f"{emojis.manage} У авантюриста {self.member.mention} {now_hits} + {more_hits} / {new_max_hits} хитов."
         else:
-            description_text_for_response = f"{emojis.check} Авантюристу установлено {new_max_hits} максимальных хитов."
-            description_text_for_original_message = f"{emojis.manage} У авантюриста {self.member.mention} {now_hits} / {new_max_hits} хитов."
-        description_text_for_original_message += f"\n\n{create_hit_bar(now_hits, more_hits, new_max_hits)}"
-        await interaction.response.edit_message(
-            embed = discord.Embed(
-                description = description_text_for_original_message,
-                colour = discord.Colour.orange()),
-            view = HitsSettingsView(self.member, self.bot)
-            )
-        await interaction.respond(
-            embed = discord.Embed(
-                description = description_text_for_response,
-                colour = discord.Colour.green()),
-            ephemeral = True
-            )
-        log_channel = self.bot.get_channel(channel_log_hits_id)
-        log_embed = discord.Embed(
-            description = f"{emojis.logs} `{interaction.user.name}` устанавливает `{self.member.name}` максимальные хиты.\n> {self.max_hits} -> {new_max_hits}",
-            colour = discord.Colour.blurple(),
-            timestamp = datetime.datetime.now()
-            )
-        log_embed.set_author(
-            name = interaction.user.name,
-            url = interaction.user.jump_url,
-            icon_url = interaction.user.avatar.url
-            )
-        await log_channel.send(embed = log_embed)
+            now_hits = cursor.execute(f"SELECT now_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
+            more_hits = cursor.execute(f"SELECT more_hits FROM hits WHERE id = {self.member.id}").fetchone()[0]
+            new_max_hits = set_max_hits_amount
+            cursor.execute(f"UPDATE hits SET max_hits = '{new_max_hits}' WHERE id = {self.member.id}")
+            connection.commit()
+            if more_hits > 0:
+                description_text_for_response = f"{emojis.check} Авантюристу установлено {new_max_hits} максммальных хитов."
+                description_text_for_original_message = f"{emojis.manage} У авантюриста {self.member.mention} {now_hits} + {more_hits} / {new_max_hits} хитов."
+            else:
+                description_text_for_response = f"{emojis.check} Авантюристу установлено {new_max_hits} максимальных хитов."
+                description_text_for_original_message = f"{emojis.manage} У авантюриста {self.member.mention} {now_hits} / {new_max_hits} хитов."
+            description_text_for_original_message += f"\n\n{create_hit_bar(now_hits, more_hits, new_max_hits)}"
+            await interaction.response.edit_message(
+                embed = discord.Embed(
+                    description = description_text_for_original_message,
+                    colour = discord.Colour.orange()),
+                view = HitsSettingsView(self.member, self.bot)
+                )
+            await interaction.respond(
+                embed = discord.Embed(
+                    description = description_text_for_response,
+                    colour = discord.Colour.green()),
+                ephemeral = True
+                )
+            log_channel = self.bot.get_channel(channel_log_hits_id)
+            log_embed = discord.Embed(
+                description = f"{emojis.logs} `{interaction.user.name}` устанавливает `{self.member.name}` максимальные хиты.\n> {self.max_hits} -> {new_max_hits}",
+                colour = discord.Colour.blurple(),
+                timestamp = datetime.datetime.now()
+                )
+            log_embed.set_author(
+                name = interaction.user.name,
+                url = interaction.user.jump_url,
+                icon_url = interaction.user.avatar.url
+                )
+            await log_channel.send(embed = log_embed)
 
 class HitsSettingsView(discord.ui.View):
     def __init__(self, member: discord.Member, bot: discord.Bot):

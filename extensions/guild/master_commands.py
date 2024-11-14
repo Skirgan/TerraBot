@@ -6,7 +6,7 @@ from pycord.multicog import subcommand
 from config import master_role_id, administrator_role_id
 from database import connection_tasks as connection, cursor_tasks as cursor
 from .functions import is_master
-from enums import emojis
+from classes import emojis
 
 class MasterCommands(commands.Cog):
     def __init__(self, bot):

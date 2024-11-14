@@ -4,7 +4,7 @@ from discord.ext import commands
 
 from config import administrator_role_id
 from database import connection_tasks as connection, cursor_tasks as cursor
-from enums import emojis
+from classes import emojis
 
 class TaskView(discord.ui.View):
     def __init__(self, position):

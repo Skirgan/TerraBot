@@ -4,6 +4,7 @@ from discord.ext import commands
 
 from .functions import autocomplete_party_names, is_party_owner, is_activist
 from database import connection_parties as connection, cursor_parties as cursor
+from classes import emojis
 
 class CreateAndDeleteParties(commands.Cog):
     def __init__(self, bot):
@@ -50,11 +51,11 @@ class CreateAndDeleteParties(commands.Cog):
                     )
                 cursor.execute(f"INSERT INTO parties VALUES ('{party_name}', {category.id}, {role.id}, {ctx.author.id}, '', '')")
                 connection.commit()
-                await ctx.respond(f"<:manage:1297268323200929842> Создана категория `{category_name}`. Роль группы: {role.mention}.")
+                await ctx.respond(f"{emojis.manage} Создана категория `{category_name}`. Роль группы: {role.mention}.")
             else:
-                await ctx.respond("<:cross:1297268043667476490> Группа с таким названием уже существует.")
+                await ctx.respond(f"{emojis.cross} Группа с таким названием уже существует.")
         else:
-            await ctx.respond("<:block:1297268337264300094> У вас недостаточно прав для создания группы.")
+            await ctx.respond(f"{emojis.block} У вас недостаточно прав для создания группы.")
 
     @parties.command(name = "удалить_группу")
     async def parties_delete(
@@ -84,11 +85,11 @@ class CreateAndDeleteParties(commands.Cog):
 				    pass
 			    cursor.execute(f"DELETE FROM parties WHERE name = '{party_name}'")
 			    connection.commit()
-			    await ctx.respond(f"<:delete:1297268016827858954> Группа `{party_name}` была удалена.")
+			    await ctx.respond(f"{emojis.delete} Группа `{party_name}` была удалена.")
 		    else:
-			    await ctx.respond("<:block:1297268337264300094> Вы не являетесь организатором данной группы.")
+			    await ctx.respond(f"{emojis.block} Вы не являетесь организатором данной группы.")
 	    else:
-		    await ctx.respond("<:cross:1297268043667476490> Этой группы не существует.")
+		    await ctx.respond(f"{emojis.cross} Этой группы не существует.")
 
 def setup(bot):
     bot.add_cog(CreateAndDeleteParties(bot))

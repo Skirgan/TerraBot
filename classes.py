@@ -7,13 +7,16 @@ class EmojiModes(enum.Enum):
     none = 3
 
 # Прошу соблюдать либо алфавитный, либо числовой порядок в названиях аттрибутов.
-class TerraBotEmojis():
+class TerraBotEmojis:
     administrator = "<:administrator:1297268078375080036>"
     block = "<:block:1297268337264300094>"
     check = "<:check:1297268217303007314>"
     cross = "<:cross:1297268043667476490>"
     delete = "<:delete:1297268016827858954>"
+    dislike = "<:dislike:1297275987012358165>"
+    mail = "<:mail:1297268371263586367>"
     manage = "<:manage:1297268323200929842>"
+    member = "<:member:1297268091197067396>"
     members = "<:members:1297268054840971265>"
     moderator = "<:moderator:1297268117965377689>"
     mute = "<:mute:1297267954022617279>"
@@ -27,6 +30,7 @@ class TerraBotEmojis():
     staff = "<:staff:1297268197581520926>"
     stats = "<:stats:1297268132666150993>"
     unblock = "<:unblock:1297267969096810567>"
+    write = "<:write:1297267979402084402>"
 
     zero_l = "<:0l:1304560675787509811>"
     zero_p = "<:0p:1304560694775119994>"
@@ -46,52 +50,60 @@ class TerraBotEmojis():
     eight = "<:8n:1304563460201513141>"
     nine = "<:9n:1304563470032699412>"
 
-class Placeholders():
-    administrator = ":cool:"
-    block = ":cool:"
-    check = ":cool:"
-    cross = ":cool:"
-    delete = ":cool:"
-    manage = ":cool:"
-    members = ":cool:"
-    moderator = ":cool:"
-    mute = "cool"
-    like = ":cool:"
-    logs = ":cool:"
-    minus = ":cool:"
-    plus = ":cool:"
-    profile = ":cool:"
-    search = ":cool:"
-    secure = ":cool:"
-    staff = ":cool:"
-    stats = ":cool:"
-    unblock = ":cool:"
+class Placeholders:
+    __ph = ":cool:"    #  (PlaceHolder); Два нижних подчёркивания в начале делают переменную приватной (её не вызвать через Placeholders.__ph)
+    administrator = __ph
+    block = __ph
+    check = __ph
+    cross = __ph
+    delete = __ph
+    dislike = __ph
+    mail = __ph
+    manage = __ph
+    member = __ph
+    members = __ph
+    moderator = __ph
+    mute = __ph
+    like = __ph
+    logs = __ph
+    minus = __ph
+    plus = __ph
+    profile = __ph
+    search = __ph
+    secure = __ph
+    staff = __ph
+    stats = __ph
+    unblock = __ph
+    write = __ph
 
-    zero_l = ":cool:"
-    zero_p = ":cool:"
-    zero_r = ":cool:"
-    one_l = ":cool:"
-    one_p = ":cool:"
-    one_r = ":cool:"
+    zero_l = __ph
+    zero_p = __ph
+    zero_r = __ph
+    one_l = __ph
+    one_p = __ph
+    one_r = __ph
 
-    zero = ":cool:"
-    one = ":cool:"
-    two = ":cool:"
-    three = ":cool:"
-    four = ":cool:"
-    five = ":cool:"
-    six = ":cool:"
-    seven = ":cool:"
-    eight = ":cool:"
-    nine = ":cool:"
+    zero = __ph
+    one = __ph
+    two = __ph
+    three = __ph
+    four = __ph
+    five = __ph
+    six = __ph
+    seven = __ph
+    eight = __ph
+    nine = __ph
 
-class NoEmojis():
+class NoEmojis:
     administrator = ""
     block = ""
     check = ""
     cross = ""
     delete = ""
+    dislike = ""
+    mail = ""
     manage = ""
+    member = ""
     members = ""
     moderator = ""
     mute = ""

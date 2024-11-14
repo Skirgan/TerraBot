@@ -5,7 +5,7 @@ from pycord.multicog import subcommand
 
 from .functions import autocomplete_mention_names
 from database import connection_mentions as connection, cursor_mentions as cursor
-from enums import emojis
+from classes import emojis
 
 class InformationMentions(commands.Cog):
     def __init__(self, bot):
@@ -32,7 +32,7 @@ class InformationMentions(commands.Cog):
             text = ""
             for member in mention_members:
                 if member:
-                    text += f"\n> <:member:1297268091197067396> <@!{member}>;"
+                    text += f"\n> {emojis.member} <@!{member}>;"
                 else:
                     text += f"\n> {emojis.cross} Участники отсутствуют."
             await ctx.respond(f"{emojis.stats} Статистика рассылки `\"{mention_name}\"`:\n{emojis.moderator} Статус: {mention_public}.\n{emojis.members} Участники:{text[:-1]}.")

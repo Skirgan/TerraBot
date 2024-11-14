@@ -1,4 +1,4 @@
-from enums import EmojiModes
+from classes import EmojiModes
 
 # Параметры
 emoji_mode = EmojiModes.terra_bot   # Опции: terra_bot, discord, placeholder, none. Опция "discord" на данный момент не работает.

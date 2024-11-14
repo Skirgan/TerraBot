@@ -6,7 +6,7 @@ import os
 from colorama import init, Fore, Style
 from extensions import *
 from config import token, administrator_role_id
-from enums import emojis
+from classes import emojis
 
 intents = discord.Intents.default()
 intents = discord.Intents.all()

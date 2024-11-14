@@ -3,7 +3,7 @@ from discord.ext import commands
 
 from config import channel_log_delete_id
 from database import connection_mentions as connection, cursor_mentions as cursor
-from enums import emojis
+from classes import emojis
 
 class EventsMentions(commands.Cog):
     def __init__(self, bot, channel_log_delete_id):

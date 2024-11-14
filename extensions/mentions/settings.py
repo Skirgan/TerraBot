@@ -6,6 +6,7 @@ from pycord.multicog import subcommand
 from config import moderator_role_id, channel_log_delete_id
 from .functions import autocomplete_mention_names
 from database import connection_mentions as connection, cursor_mentions as cursor
+from classes import emojis
 
 class MentionNameModal(discord.ui.Modal):
     def __init__(self, mention_name):
@@ -21,9 +22,9 @@ class MentionNameModal(discord.ui.Modal):
             cursor.execute(f"UPDATE mentions SET name = '{new_mention_name}' WHERE name = '{self.mention_name}'")
             connection.commit()
             await interaction.response.edit_message(view = SettingsView(new_mention_name))
-            await interaction.respond(f"<:staff:1297268197581520926> Вы изменили название рассылки с `\"{self.mention_name}\"` на `\"{new_mention_name}\"`.", ephemeral = True)
+            await interaction.respond(f"{emojis.staff} Вы изменили название рассылки с `\"{self.mention_name}\"` на `\"{new_mention_name}\"`.", ephemeral = True)
         else:
-            await interaction.respond("<:cross:1297268043667476490> Рассылка с таким названием уже существует.", ephemeral = True)
+            await interaction.respond(f"{emojis.cross} Рассылка с таким названием уже существует.", ephemeral = True)
 
 class MentionOwnerView(discord.ui.View):
     def __init__(self, mention_name):
@@ -36,9 +37,9 @@ class MentionOwnerView(discord.ui.View):
     async def user_select_callback(self, select, interaction):
         cursor.execute(f"UPDATE mentions SET owner_id = {select.values[0].id} WHERE name = '{self.mention_name}'")
         connection.commit()
-        await interaction.response.edit_message(content = "<:block:1297268337264300094> Вы не являетесь владельцем рассылки.", view = None)
-        await interaction.respond(f"<:staff:1297268197581520926> Вы передали права владельца над рассылкой `\"{self.mention_name}\"` {select.values[0].mention}.", ephemeral = True)
-        await interaction.channel.send(f"<:administrator:1297268078375080036> {select.values[0].mention}, вас назначили новым владельцем рассылки `\"{self.mention_name}\"`.")
+        await interaction.response.edit_message(content = f"{emojis.block} Вы не являетесь владельцем рассылки.", view = None)
+        await interaction.respond(f"{emojis.staff} Вы передали права владельца над рассылкой `\"{self.mention_name}\"` {select.values[0].mention}.", ephemeral = True)
+        await interaction.channel.send(f"{emojis.administrator} {select.values[0].mention}, вас назначили новым владельцем рассылки `\"{self.mention_name}\"`.")
 
 class SettingsView(discord.ui.View):
     def __init__(self, mention_name):
@@ -70,7 +71,7 @@ class SettingsView(discord.ui.View):
             if mention_public == 1:
                 cursor.execute(f"UPDATE mentions SET public = 0 WHERE name = '{self.mention_name}'")
                 connection.commit()
-                await interaction.respond(f"<:block:1297268337264300094> Вы сделали рассылку `\"{self.mention_name}\"` личной.", ephemeral = True)
+                await interaction.respond(f"{emojis.block} Вы сделали рассылку `\"{self.mention_name}\"` личной.", ephemeral = True)
             if mention_public == 0:
                 cursor.execute(f"UPDATE mentions SET public = 1 WHERE name = '{self.mention_name}'")
                 connection.commit()
@@ -100,9 +101,9 @@ class SettingsMentions(commands.Cog):
             if ctx.author.id == cursor.execute(f"SELECT owner_id FROM mentions WHERE name = '{mention_name}'").fetchone()[0] or ctx.author.get_role(moderator_role_id) is not None:
                 await ctx.respond("<:manage:1297268323200929842> Выберите, какой именно параметр вы желаете изменить.", view = SettingsView(mention_name))
             else:
-                await ctx.respond(f"<:block:1297268337264300094> Вы не являетесь владельцем рассылки.")
+                await ctx.respond(f"{emojis.block} Вы не являетесь владельцем рассылки.")
         else:
-            await ctx.respond(f"<:cross:1297268043667476490> Такой рассылки не существует.")
+            await ctx.respond(f"{emojis.cross} Такой рассылки не существует.")
 
 def setup(bot):
     bot.add_cog(SettingsMentions(bot))

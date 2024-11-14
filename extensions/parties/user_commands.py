@@ -5,6 +5,7 @@ from pycord.multicog import subcommand
 
 from .functions import autocomplete_party_names, kick_party_member, is_party_member
 from database import connection_parties as connection, cursor_parties as cursor
+from classes import emojis
 
 class UserCommandsParties(commands.Cog):
     def __init__(self, bot):
@@ -27,11 +28,11 @@ class UserCommandsParties(commands.Cog):
         if check_party_name.fetchone() is not None:
             if is_party_member(ctx, ctx.author, party_name):
                 await kick_party_member(ctx.guild, ctx.author, party_name)
-                await ctx.respond(f"<:minus:1297268270126338120> Вы вышли из группы `\"{party_name}\"`.")
+                await ctx.respond(f"{emojis.minus} Вы вышли из группы `\"{party_name}\"`.")
             else:
-                await ctx.respond(f"<:cross:1297268043667476490> Вы не являетесь участником данной группы.")
+                await ctx.respond(f"{emojis.cross} Вы не являетесь участником данной группы.")
         else:
-            await ctx.respond(f"<:cross:1297268043667476490> Такой группы не существует.")
+            await ctx.respond(f"{emojis.cross} Такой группы не существует.")
 
 def setup(bot):
     bot.add_cog(UserCommandsParties(bot))

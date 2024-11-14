@@ -1,3 +1,5 @@
+import discord
+
 from config import activist_role_id
 from database import connection_parties as connection, cursor_parties as cursor
 

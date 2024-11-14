@@ -7,6 +7,7 @@ from config import channel_log_delete_id, moderator_role_id
 from .functions import autocomplete_mention_names
 from database import connection_mentions as connection, cursor_mentions as cursor
 from classes import emojis
+from main import bot
 
 class UserCommandsMentions(commands.Cog):
     def __init__(self, bot, channel_log_delete_id):
@@ -64,7 +65,7 @@ class UserCommandsMentions(commands.Cog):
                     if len(mention_members) == 1:
                         cursor.execute(f"DELETE FROM mentions WHERE name = '{mention_name}'")
                         connection.commit()
-                        await channel_log_delete.send(f"{emojis.delete} Рассылка \"`{mention_name}`\" была удалена автоматически.")
+                        await bot.fetch_channel(channel_log_delete_id).send(f"{emojis.delete} Рассылка \"`{mention_name}`\" была удалена автоматически.")
                     else:
                         cursor.execute(f"UPDATE mentions SET members = '{'.'.join(mention_members)}' WHERE name = '{mention_name}'")
                         connection.commit()

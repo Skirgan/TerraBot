@@ -88,7 +88,7 @@ async def request(interaction, member, party_name):
     if dm is None:
         try:
             dm = await member.create_dm()
-        except:
+        except Exception:
             await interaction.respond(f"{emojis.cross} Не удалось создать личные сообщения с пользователем.")
             return False
     await interaction.respond(f"{emojis.mail} Запрос отправлен.")

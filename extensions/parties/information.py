@@ -61,7 +61,7 @@ class InformationParties(commands.Cog):
                 owner_id = cursor.execute(f"SELECT owner_id FROM parties WHERE name = '{party_name}'").fetchone()[0]
                 try:
                     members_count = len(cursor.execute(f"SELECT members FROM parties WHERE name = '{party_name}'").fetchone()[0].split(".").remove(""))
-                except: 
+                except Exception:
                     members_count = 0
                 text_for_add = f"{emojis.profile} Название: {party_name};\n{emojis.administrator} Организатор: {ctx.guild.get_member(owner_id)};\n{emojis.members} Количество участников: {members_count}.```\n"
                 if only_subs:

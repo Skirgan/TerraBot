@@ -25,7 +25,7 @@ async def on_ready():
                     str_for_load = f"{directory[2:]}.{file[:-3]}".replace("\\", ".")
                     bot.load_extension(str_for_load)
                     print(f" —— {Fore.GREEN}успешно{Fore.RESET}")
-                except:
+                except Exception:
                     print(f" —— {Fore.RED}безуспешно{Fore.RESET}")
     if not bot.auto_sync_commands:
         await bot.sync_commands(guild_ids = [787280396915048498])

@@ -112,7 +112,7 @@ class UserCommandsMentions(commands.Cog):
                             if dm is None:	
                                 try:
                                     dm = await member.create_dm()
-                                except:
+                                except Exception:
                                     pass
                             try:
                                 if mention_text is None:

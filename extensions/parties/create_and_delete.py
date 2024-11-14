@@ -81,7 +81,7 @@ class CreateAndDeleteParties(commands.Cog):
 					    target = ctx.guild.default_role,
 					    view_channel = False
 					    )
-			    except:
+			    except Exception:
 				    pass
 			    cursor.execute(f"DELETE FROM parties WHERE name = '{party_name}'")
 			    connection.commit()

@@ -63,7 +63,7 @@ class InformationMentions(commands.Cog):
                 owner_id = cursor.execute(f"SELECT owner_id FROM mentions WHERE name = '{mention_name}'").fetchone()[0]
                 try:
                     members_count = len(cursor.execute(f"SELECT members FROM mentions WHERE name = '{party_name}'").fetchone()[0].split(".").remove(""))
-                except: 
+                except Exception:
                     members_count = 0
                 text_for_add = f"{emojis.profile} Название: {mention_name};\n{emojis.administrator} Владелец: {ctx.guild.get_member(owner_id)};\n{emojis.members} Количество подписавшихся: {members_count}.```\n"
                 if only_subs:

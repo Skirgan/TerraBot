@@ -30,7 +30,7 @@ class ReduceHitsModal(discord.ui.Modal):
     async def callback(self, interaction):
         try:
             reduce_hits_amount = int(self.children[0].value)
-        except:
+        except ValueError:
             await ctx.respond(
                 embed = discord.Embed(
                     description = f"{emojis.cross} Лорд Ао разочарован, что разумная жизнь не была уничтожена в ходе Низвержения.",
@@ -105,7 +105,7 @@ class AddHitsModal(discord.ui.Modal):
     async def callback(self, interaction):
         try:
             add_hits_amount = int(self.children[0].value)
-        except:
+        except ValueError:
             await ctx.respond(
                 embed = discord.Embed(
                     description = f"{emojis.cross} Лорд Ао разочарован, что разумная жизнь не была уничтожена в ходе Низвержения.",
@@ -166,7 +166,7 @@ class SetNowHitsModal(discord.ui.Modal):
     async def callback(self, interaction):
         try:
             set_now_hits_amount = int(self.children[0].value)
-        except:
+        except ValueError:
             await ctx.respond(
                 embed = discord.Embed(
                     description = f"{emojis.cross} Лорд Ао разочарован, что разумная жизнь не была уничтожена в ходе Низвержения.",
@@ -226,7 +226,7 @@ class SetMoreHitsModal(discord.ui.Modal):
     async def callback(self, interaction):
         try:
             set_more_hits_amount = int(self.children[0].value)
-        except:
+        except ValueError:
             await ctx.respond(
                 embed = discord.Embed(
                     description = f"{emojis.cross} Лорд Ао разочарован, что разумная жизнь не была уничтожена в ходе Низвержения.",
@@ -286,7 +286,7 @@ class SetMaxHitsModal(discord.ui.Modal):
     async def callback(self, interaction):
         try:
             set_max_hits_amount = int(self.children[0].value)
-        except:
+        except ValueError:
             await ctx.respond(
                 embed = discord.Embed(
                     description = f"{emojis.cross} Лорд Ао разочарован, что разумная жизнь не была уничтожена в ходе Низвержения.",

@@ -13,5 +13,3 @@ moderator_role_id = 1289906689100742717
 channel_log_delete_id = 946026056849170432
 channel_log_hits_id = 1304853335819419778
 forum_tasks_id = 1304164705316896841
-
-token = ""

@@ -5,7 +5,8 @@ from pycord.multicog import Bot
 import os
 from colorama import init, Fore, Style
 from extensions import *
-from config import token, administrator_role_id
+from config import administrator_role_id
+from token import token
 from classes import emojis
 
 intents = discord.Intents.default()

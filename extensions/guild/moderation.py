@@ -13,7 +13,7 @@ class EventsModeration(commands.Cog):
     async def on_message(self, message):
         try:
             if message.channel.category_id == forum_tasks_id:
-               for message_in_channel_history in message.channel.history(oldest_first = True):
+               async for message_in_channel_history in message.channel.history(oldest_first = True):
                    if message_in_channel_history.content.startswith("((") and message_in_channel_history.author == message.author:
                        await asyncio.sleep(10)
                        await message_in_channel_history.delete()

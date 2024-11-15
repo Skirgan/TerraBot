@@ -20,6 +20,8 @@ class EventsModeration(commands.Cog):
                        break
         except AttributeError:
             pass
+        except TypeError:
+            pass
 
 def setup(bot):
     bot.add_cog(EventsModeration(bot))

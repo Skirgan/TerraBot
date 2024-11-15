@@ -59,7 +59,8 @@ class SettingsView(discord.ui.View):
             discord.SelectOption(
                 label = "Изменить владельца",
                 value = "change_owner",
-                emoji = "<:administrator:1297268078375080036>")])
+                emoji = "<:administrator:1297268078375080036>")
+            ])
     async def select_callback(self, select, interaction):
         choice = select.values[0]
         if choice == "change_name":

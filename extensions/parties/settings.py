@@ -156,7 +156,8 @@ class SettingsView(discord.ui.View):
             discord.SelectOption(
                 label = "Выгнать из группы",
                 value = "kick",
-                emoji = "<:minus:1297268270126338120>")])
+                emoji = "<:minus:1297268270126338120>")
+            ])
     async def select_callback(self, select, interaction):
         choice = select.values[0]
         if choice == "change_owner":

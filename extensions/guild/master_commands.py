@@ -95,8 +95,9 @@ class MasterCommands(commands.Cog):
                     cursor.execute(f"UPDATE tasks SET dm_id = {ctx.author.id} WHERE position = {position}")
                     connection.commit()
                     await ctx.respond(
+                        "-# Из-за технических проблем невозможно ограничить создание публикаций на форуме. Сделайте это вручную.",
                         embed = discord.Embed(
-                            description = f"<:check:1297268217303007314> Задание помещено на доску объявлений, место сбора: {forum.mention}.\n -# Из-за технических проблем невозможно ограничить создание публикаций на форуме. Сделайте это вручную.",
+                            description = f"<:check:1297268217303007314> Задание помещено на доску объявлений, место сбора: {forum.mention}.",
                             colour = discord.Colour.green()),
                         ephemeral = True
                         )

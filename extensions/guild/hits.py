@@ -364,7 +364,8 @@ class HitsSettingsView(discord.ui.View):
             discord.SelectOption(
                 label = "Установить максимальные хиты",
                 value = "set_max_hits",
-                emoji = "<:manage:1297268323200929842>")])
+                emoji = "<:manage:1297268323200929842>")
+            ])
     async def select_callback(self, select, interaction):
         choice = select.values[0]
         if choice == "reduce_hits":

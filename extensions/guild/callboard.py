@@ -2,9 +2,9 @@ import discord
 from discord.ui import Button, View
 from discord.ext import commands
 
-from config import administrator_role_id
 from database import connection_tasks as connection, cursor_tasks as cursor
 from emojis import emojis
+from config import config
 
 
 class TaskView(discord.ui.View):
@@ -129,7 +129,7 @@ class Callboard(commands.Cog):
         ):
         await ctx.defer(ephemeral = True)
 
-        if ctx.author.get_role(administrator_role_id):
+        if ctx.author.get_role(config["Роли"]["administrator_role_id"]):
             await ctx.respond(f"{emojis.staff} Публикую доску объявлений.")
             callboard = await ctx.send(
                 embed = discord.Embed(

@@ -3,11 +3,14 @@ from discord.ui import Button, View
 from discord.ext import commands
 from pycord.multicog import subcommand
 
-from config import master_role_id, administrator_role_id
+from config import config
 from database import connection_tasks as connection, cursor_tasks as cursor
 from .functions import is_master
 from emojis import emojis
 
+
+master_role_id = config["Роли"]["master_role_id"]
+administrator_role_id = config["Роли"]["administrator_role_id"]
 
 class MasterCommands(commands.Cog):
     def __init__(self, bot):

@@ -1,6 +1,7 @@
-from config import master_role_id
+from config import config
 from emojis import emojis
 
+master_role_id = config["Роли"]["master_role_id"]
 
 def is_master(ctx):
 	return ctx.author.get_role(master_role_id) is not None

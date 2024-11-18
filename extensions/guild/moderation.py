@@ -3,7 +3,9 @@ import asyncio
 import discord
 from discord.ext import commands
 
-from config import forum_tasks_id
+from config import config
+
+forum_tasks_id = config["Каналы"]["forum_tasks_id"]
 
 class EventsModeration(commands.Cog):
     def __init__(self, bot):

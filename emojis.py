@@ -1,11 +1,11 @@
 from classes import EmojiModes, TerraBotEmojis, Placeholders, NoEmojis
-from config import emoji_mode
+from config import config
 
+emoji_mode = config["Параметры"]["emoji_mode"]
 global emojis
 def set_emojis():
-    """
+    """Ничего не возвращает.
     Инициализация эмодзи в соответствии с конфигом.
-    :return:
     """
     global emojis
     if emoji_mode == EmojiModes.terra_bot:

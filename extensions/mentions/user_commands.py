@@ -3,12 +3,14 @@ from discord.ui import Button, View
 from discord.ext import commands
 from pycord.multicog import subcommand
 
-from config import channel_log_delete_id, moderator_role_id
+from config import config
 from .functions import autocomplete_mention_names
 from database import connection_mentions as connection, cursor_mentions as cursor
 from bot import bot
 from emojis import emojis
 
+moderator_role_id = config["Роли"]["moderator_role_id"]
+channel_log_delete_id = config["Каналы"]["channel_log_delete_id"]
 
 class UserCommandsMentions(commands.Cog):
     def __init__(self, bot, channel_log_delete_id):

@@ -3,12 +3,13 @@ from discord.ui import Button, View
 from discord.ext import commands
 from pycord.multicog import subcommand
 
-from config import moderator_role_id
+from config import config
 from .functions import autocomplete_party_names, kick_party_member, is_party_member
 from database import connection_parties as connection, cursor_parties as cursor
 from emojis import emojis
 
 
+moderator_role_id = config["Роли"]["moderator_role_id"]
 class PartyOwnerView(discord.ui.View):
     def __init__(self, party_name):
         super().__init__()

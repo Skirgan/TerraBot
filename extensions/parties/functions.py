@@ -1,7 +1,9 @@
 import discord
 
-from config import activist_role_id
+from config import config
 from database import connection_parties as connection, cursor_parties as cursor
+
+activist_role_id = config["Роли"]["activist_role_id"]
 
 async def autocomplete_party_names(ctx):
 	return [party[0] for party in cursor.execute(f"SELECT name FROM parties").fetchall()]

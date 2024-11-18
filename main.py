@@ -5,15 +5,36 @@ import os
 from colorama import Fore, Style
 
 from bot import bot
-from config import administrator_role_id
-from emojis import set_emojis
 from token_file import token
+from config import initialize_config, config
+from funcs import override_config_ids
 
+administrator_role_id = 0
 bot.auto_sync_commands = False
 
 @bot.event
 async def on_ready():
+    global administrator_role_id
+
+    initialize_config("config.txt")
+
+    # Хе-хе. Да, он должен тут стоять, я не шиз.
+    from config import config
+
+    if config["Параметры"]["override_config"]:
+        override_config_ids(input("Включена функция перезаписи ID каналов и ролей.\nВведите название сервера:"))
+
+    # И эти тоже. Именно в таком порядке.
+    from emojis import set_emojis
     set_emojis()
+    from emojis import emojis
+
+    global emojis
+
+
+
+    administrator_role_id = config["Роли"]["administrator_role_id"]
+
     black_list_files = ["__init__.py", "functions.py"]
     for directory, directories, files in os.walk("./extensions"):
         for file in os.listdir(directory):

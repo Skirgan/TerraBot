@@ -1,6 +1,5 @@
 import enum
 
-
 class EmojiModes(enum.Enum):
     terra_bot = 1
     placeholder = 2

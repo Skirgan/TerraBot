@@ -1,5 +1,5 @@
 from config import master_role_id
-from main import emojis
+from emojis import emojis
 
 
 def is_master(ctx):

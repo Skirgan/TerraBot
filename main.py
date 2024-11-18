@@ -1,34 +1,19 @@
 ﻿import datetime
 import discord
 from discord.ext import commands
-from pycord.multicog import Bot
 import os
-from colorama import init, Fore, Style
+from colorama import Fore, Style
 
-from classes import TerraBotEmojis
+from bot import bot
 from config import administrator_role_id
+from emojis import set_emojis
 from token_file import token
-from classes import EmojiModes, TerraBotEmojis, Placeholders, NoEmojis
-from config import emoji_mode
 
-intents = discord.Intents.default()
-intents = discord.Intents.all()
-bot = Bot(intents = intents)
 bot.auto_sync_commands = False
 
 @bot.event
 async def on_ready():
-    # Инициализация эмодзи в соответствии с конфигом.
-    global emojis
-    if emoji_mode == EmojiModes.terra_bot:
-        emojis = TerraBotEmojis()
-
-    elif emoji_mode == EmojiModes.placeholder:
-        emojis = Placeholders()
-
-    elif emoji_mode == EmojiModes.none:
-        emojis = NoEmojis()
-
+    set_emojis()
     black_list_files = ["__init__.py", "functions.py"]
     for directory, directories, files in os.walk("./extensions"):
         for file in os.listdir(directory):
@@ -57,7 +42,7 @@ async def on_ready():
         for event in bot.get_cog(cog).get_listeners():
             print(f"{Style.DIM}{Fore.YELLOW}·{Fore.RESET}{Style.RESET_ALL} {Fore.YELLOW}{event[0]}{Fore.RESET} (обработчик)")
 
-    await bot.change_presence(activity = discord.Activity(type = discord.ActivityType.custom, state = f"Запуск произведён {datetime.datetime.now().strftime('%H:%M:%S')}"))
+    await bot.change_presence(activity = discord.Activity(type = discord.ActivityType.custom, state =f"Запуск произведён {datetime.datetime.now().strftime('%H:%M:%S')}"))
 
 class AdminSettings(commands.Cog):
     def __init__(self, bot):

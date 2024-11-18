@@ -1,7 +1,7 @@
 from classes import EmojiModes
 
 # Параметры
-emoji_mode = EmojiModes.terra_bot   # Опции: terra_bot, discord, placeholder, none. Опция "discord" на данный момент не работает.
+emoji_mode = EmojiModes.terra_bot   # Опции: terra_bot, placeholder, none.
 
 # ID ролей
 activist_role_id = 1283712029198254090

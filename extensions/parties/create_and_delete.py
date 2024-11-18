@@ -4,7 +4,7 @@ from discord.ext import commands
 
 from .functions import autocomplete_party_names, is_party_owner, is_activist
 from database import connection_parties as connection, cursor_parties as cursor
-from main import emojis
+from emojis import emojis
 
 
 class CreateAndDeleteParties(commands.Cog):

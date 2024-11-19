@@ -2,6 +2,7 @@ from classes import EmojiModes, TerraBotEmojis, Placeholders, NoEmojis
 from config import config
 
 emoji_mode = config["Параметры"]["emoji_mode"]
+
 global emojis
 def set_emojis():
     """Ничего не возвращает.
@@ -16,3 +17,5 @@ def set_emojis():
 
     elif emoji_mode == EmojiModes.none:
         emojis = NoEmojis()
+
+set_emojis()

@@ -74,9 +74,9 @@ def initialize_config(file):
                 _config[line.removesuffix(":\n")] = _level    # Вкладывание _level внутрь конфига.
                 print(f"=== _level перенесён. Текущий вид словаря: {_config}")
             print("\t")
-    config = _config
+    return _config
 
-config = dict()
+config = initialize_config("config.txt")
 
 
 # Debug-версия:

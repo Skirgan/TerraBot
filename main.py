@@ -1,4 +1,10 @@
-﻿import datetime
+﻿# from config import initialize_config
+# from emojis import set_emojis
+#
+# initialize_config("config.txt")
+# set_emojis()
+
+import datetime
 import discord
 from discord.ext import commands
 import os
@@ -6,32 +12,24 @@ from colorama import Fore, Style
 
 from bot import bot
 from token_file import token
-from config import initialize_config, config
-from funcs import override_config_ids
+from config import config
+from funcs import override_config_ids, get_guild_by_name
+from emojis import emojis
 
 administrator_role_id = 0
 bot.auto_sync_commands = False
+
 
 @bot.event
 async def on_ready():
     global administrator_role_id
 
-    initialize_config("config.txt")
-
-    # Хе-хе. Да, он должен тут стоять, я не шиз.
-    from config import config
+    guild_id = 787280396915048498
 
     if config["Параметры"]["override_config"]:
-        override_config_ids(input("Включена функция перезаписи ID каналов и ролей.\nВведите название сервера:"))
-
-    # И эти тоже. Именно в таком порядке.
-    from emojis import set_emojis
-    set_emojis()
-    from emojis import emojis
-
-    global emojis
-
-
+        guild = get_guild_by_name(input("Включена функция перезаписи ID каналов и ролей.\nВведите название сервера: "))
+        guild_id = guild.id
+        override_config_ids(guild)
 
     administrator_role_id = config["Роли"]["administrator_role_id"]
 
@@ -47,7 +45,7 @@ async def on_ready():
                 except Exception:
                     print(f" —— {Fore.RED}безуспешно{Fore.RESET}")
     if not bot.auto_sync_commands:
-        await bot.sync_commands(guild_ids = [787280396915048498])
+        await bot.sync_commands(guild_ids = [guild_id])
 
     print(f"\nПодключённые команды:")
     for cog in list(bot.cogs.keys()):

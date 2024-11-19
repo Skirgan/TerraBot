@@ -1,9 +1,3 @@
-﻿# from config import initialize_config
-# from emojis import set_emojis
-#
-# initialize_config("config.txt")
-# set_emojis()
-
 import datetime
 import discord
 from discord.ext import commands
@@ -13,7 +7,7 @@ from colorama import Fore, Style
 from bot import bot
 from token_file import token
 from config import config
-from funcs import override_config_ids, get_guild_by_name
+from functions import override_config_ids, get_guild_by_name
 from emojis import emojis
 
 administrator_role_id = 0

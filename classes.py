@@ -5,7 +5,7 @@ class EmojiModes(enum.Enum):
     placeholder = 2
     none = 3
 
-# Прошу соблюдать либо алфавитный, либо числовой порядок в названиях аттрибутов.
+# “Make these alphabetical or I cut you” — случайный мудрец из файлов локализации SS14.
 class TerraBotEmojis:
     administrator = "<:administrator:1297268078375080036>"
     block = "<:block:1297268337264300094>"

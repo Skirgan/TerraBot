@@ -12,7 +12,7 @@ from emojis import emojis
 
 master_role_id = config["Роли"]["master_role_id"]
 administrator_role_id = config["Роли"]["administrator_role_id"]
-channel_log_hits_id = config["Роли"]["channel_log_hits_id"]
+channel_log_hits_id = config["Каналы"]["channel_log_hits_id"]
 
 class ReduceHitsModal(discord.ui.Modal):
     def __init__(self, member: discord.Member, bot: discord.Bot):

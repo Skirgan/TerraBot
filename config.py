@@ -14,7 +14,6 @@ def initialize_config(file):
 
     print(f"{color}======== ИНИЦИАЛИЗАЦИЯ КОНФИГА ========{Fore.RESET} ")
 
-    global config
     _config = {}
 
     # Глубина словаря. Значение заменяет место, куда записываются переменные: так из {<место записи>} можно перейти на {"Роли": {<место записи>}} при необходимости.
@@ -108,4 +107,4 @@ def initialize_config(file):
     return _config
 
 config = initialize_config("config.txt")
-print(f"{color}======== КОНЕЦ ИНИЦИАЛИЗАЦИИ КОНФИГА ========{Fore.RESET} ")
+print(f"{color}======== КОНЕЦ ИНИЦИАЛИЗАЦИИ КОНФИГА ========{Fore.RESET}{Style.NORMAL}\n")

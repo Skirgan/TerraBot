@@ -11,15 +11,22 @@ def initialize_config(file):
     Принимает файл, проходит по всем строкам и пытается записать найденные параметры в словарь, попутно сортируя по категориям.
     Инструкция по использованию находится непосредственно в файле конфига.
     """
+
     print(f"{color}======== ИНИЦИАЛИЗАЦИЯ КОНФИГА ========{Fore.RESET} ")
+
     global config
     _config = {}
+
     # Глубина словаря. Значение заменяет место, куда записываются переменные: так из {<место записи>} можно перейти на {"Роли": {<место записи>}} при необходимости.
     _level = _config    # Работает как указатель, кстати.
+
     with open(file, "r", encoding="utf-8-sig") as file:    # keyword параметры пишутся слитно с пробелом.
+
         print(f"{color}┌──────{Fore.RESET} Начало чтения файла. ")
         print(f"{color}│{Fore.RESET}")
+
         for line in file.readlines():
+
             print(f"{color}├─{Fore.RESET} Читаю строку: {color2}\"{line.removesuffix("\n")}\"{Fore.RESET}.")
 
             # Является ли строка комментарием.
@@ -31,11 +38,15 @@ def initialize_config(file):
             # Объявляет ли строка переменную.
             elif " = " in line:
                 print(f"{color}{s2}{_indent*2}─{Fore.RESET} Строка объявляет переменную.")
+
                 line = line.split(" = ")    # Делит строку на название переменной и её значение; защита от дурака не предусмотрена.
+
                 name = line[0]
                 print(f"{color}{s2}{_indent*2}─{Fore.RESET} Имя переменной —{color2}", name+f"{Fore.RESET}.")
+
                 value = line[1].removesuffix("\n")
                 print(f"{color}{s2}{_indent*2}─{Fore.RESET} Значение переменной —{color2} \""+value+f"\"{Fore.RESET}.")
+
                 # Преобразовать значение в число, если возможно.
                 try:
                     value = int(value)
@@ -51,11 +62,14 @@ def initialize_config(file):
                         # Пока enum в конфиге один, потому только его и ожидаем.
                         # Пройтись по аттрибутам EmojiModes.
                         print(f"{color}{s2}{_indent*2}─{Fore.RESET} Цикл по аттрибутам Emojimodes:")
+
                         for mode in EmojiModes:
                             print(f"{color}{s2}{_indent*4}─{Fore.RESET} {mode}")
+
                             # Если значение совпадает с названием аттрибута, заменяем значение на аттрибут.
                             if value.split(".")[1] == mode.name:
                                 print(f"{color}{s2}{_indent*6}─{Fore.RESET} Значение совпадает с данным именем. Заменяю его на аттрибут.")
+
                                 value = mode
                                 break
 
@@ -70,19 +84,26 @@ def initialize_config(file):
                             value = value.removeprefix("\"").removesuffix("\"")   # Убираю кавычки из строки. Кавычки у нас по конвенции, не полноценный компилятор делаю же.
 
                 print(f"{color}{s2}{_indent}{Fore.RESET} Записываю.")
+
                 _level[name] = value
+
                 print(f"{color}│{Fore.RESET}")
                 print(f"{color}│{Fore.RESET}  Текущий вид словаря: {_config}. Вид _level: {_level}.")    # ╞══
                 print(f"{color}│{Fore.RESET}")
+
                 continue
 
             # Объявляет ли строка категорию имён.
             elif ":" in line:
                 print(f"{color}{s2}{_indent*2}─{Fore.RESET} Строка объявляет категорию имён.")
+
                 _level = dict()    # Переназначение _level на пустой словарь.
                 _config[line.removesuffix(":\n")] = _level    # Вкладывание _level внутрь конфига.
+
                 print(f"{color}│{Fore.RESET}{_indent} _level перенесён. Текущий вид словаря: {_config}")
+
             print(f"{color}│{Fore.RESET}")
+
     print(f"{color}└──────{Fore.RESET} Конец чтения файла.  ")
     return _config
 

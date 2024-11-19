@@ -33,9 +33,7 @@ def override_config_ids(guild):
     for var, name in zip(f, s):
         __new_id = get_role_id_by_name(guild, name)
         if __new_id is not None:
-            print("До:", config["Роли"][var])
             config["Роли"][var] = __new_id
-            print("После:", config["Роли"][var])
         else:
             print(f"Роль {name} не найдена!")
             return False

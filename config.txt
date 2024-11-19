@@ -8,7 +8,7 @@
 Параметры:
 # Опции: terra_bot, placeholder, none.
 emoji_mode = EmojiModes.terra_bot
-override_config = True
+override_config = False
 
 Роли:
 activist_role_id = 1283712029198254090

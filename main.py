@@ -10,7 +10,7 @@ from config import config
 from functions import override_config_ids, get_guild_by_name
 from emojis import emojis
 
-administrator_role_id = 0
+administrator_role_id = None
 bot.auto_sync_commands = False
 
 

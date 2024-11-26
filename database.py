@@ -33,7 +33,9 @@ cursor_tasks.execute("""CREATE TABLE IF NOT EXISTS tasks (
 		forum_id INT,
 		dm_id INT,
 		role_id INT,
-		position INT
+		position INT,
+		limit_of_members INT,
+		blacklist TEXT
 	)""")
 connection_tasks.commit()
 

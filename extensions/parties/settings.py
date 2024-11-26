@@ -19,7 +19,6 @@ class PartyOwnerView(discord.ui.View):
         placeholder = "Выберите нового организатора группы."
         )
     async def user_select_callback(self, select, interaction):
-        print(select)
         category = discord.utils.get(interaction.guild.categories, id = cursor.execute(f"SELECT category_id FROM parties WHERE name = '{party_name}'").fetchone()[0])
         await category.set_permissions(
             target = interaction.author,

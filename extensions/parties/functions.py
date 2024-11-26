@@ -12,7 +12,7 @@ def is_activist(ctx):
 	return ctx.author.get_role(activist_role_id) is not None
 
 def is_party_owner(ctx, party_name):
-	return ctx.author.id == cursor.execute(f"SELECT dm_id FROM parties WHERE name = '{party_name}'").fetchone()[0]
+	return ctx.author.id == cursor.execute(f"SELECT owner_id FROM parties WHERE name = '{party_name}'").fetchone()[0]
 		
 def is_party_member(member, party_name):
 	return str(member.id) in cursor.execute(f"SELECT members FROM parties WHERE name = '{party_name}'").fetchone()[0].split(", ")

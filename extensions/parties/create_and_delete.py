@@ -68,29 +68,29 @@ class CreateAndDeleteParties(commands.Cog):
 			description = "То уникальное название, что вы вводили при создании группы.",
 			required = True
 			)):
-	    await ctx.defer()
+        await ctx.defer()
 
-	    if party_name in [party[0] for party in cursor.execute(f"SELECT name FROM parties").fetchall()]:
-		    if is_party_owner(ctx, party_name = party_name):
-			    try:
-				    await ctx.guild.get_role(int(cursor.execute(f"SELECT role_id FROM parties WHERE name = '{party_name}'").fetchone()[0])).delete()
-				    await discord.utils.get(ctx.guild.categories, id = cursor.execute(f"SELECT category_id FROM parties WHERE name = '{party_name}'").fetchone()[0]).set_permissions(
+        if party_name in [party[0] for party in cursor.execute(f"SELECT name FROM parties").fetchall()]:
+            if is_party_owner(ctx, party_name = party_name):
+                try:
+                    await ctx.guild.get_role(int(cursor.execute(f"SELECT role_id FROM parties WHERE name = '{party_name}'").fetchone()[0])).delete()
+                    await discord.utils.get(ctx.guild.categories, id = cursor.execute(f"SELECT category_id FROM parties WHERE name = '{party_name}'").fetchone()[0]).set_permissions(
 					    target = ctx.author, 
 					    overwrite = None
 					    )
-				    await discord.utils.get(ctx.guild.categories, id = cursor.execute(f"SELECT category_id FROM parties WHERE name = '{party_name}'").fetchone()[0]).set_permissions(
+                    await discord.utils.get(ctx.guild.categories, id = cursor.execute(f"SELECT category_id FROM parties WHERE name = '{party_name}'").fetchone()[0]).set_permissions(
 					    target = ctx.guild.default_role,
 					    view_channel = False
 					    )
-			    except Exception:
-				    pass
-			    cursor.execute(f"DELETE FROM parties WHERE name = '{party_name}'")
-			    connection.commit()
-			    await ctx.respond(f"{emojis.delete} Группа `{party_name}` была удалена.")
-		    else:
-			    await ctx.respond(f"{emojis.block} Вы не являетесь организатором данной группы.")
-	    else:
-		    await ctx.respond(f"{emojis.cross} Этой группы не существует.")
+                except Exception:
+                    pass
+                cursor.execute(f"DELETE FROM parties WHERE name = '{party_name}'")
+                connection.commit()
+                await ctx.respond(f"{emojis.delete} Группа `{party_name}` была удалена.")
+            else:
+                await ctx.respond(f"{emojis.block} Вы не являетесь организатором данной группы.")
+        else:
+            await ctx.respond(f"{emojis.cross} Этой группы не существует.")
 
 def setup(bot):
     bot.add_cog(CreateAndDeleteParties(bot))

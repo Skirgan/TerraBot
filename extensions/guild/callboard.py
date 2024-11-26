@@ -8,9 +8,23 @@ from config import config
 
 
 class TaskView(discord.ui.View):
-    def __init__(self, position):
+    def __init__(self, position, interaction):
         super().__init__()
+        self.timeout = None
+        self.disable_on_timeout = False
         self.position = position
+        self.role_id = cursor.execute(f"SELECT role_id FROM tasks WHERE position = {self.position}").fetchone()[0]
+        self.role = interaction.guild.get_role(self.role_id)
+        limit_of_members_fetchone = cursor.execute(f"SELECT limit_of_members FROM tasks WHERE position = {self.position}").fetchone()
+        blacklist = cursor.execute(f"SELECT blacklist FROM tasks WHERE position = {self.position}").fetchone()
+        if limit_of_members_fetchone is None:
+            pass
+        elif limit_of_members_fetchone[0] <= len(self.role.members):
+            self.disable_all_items()
+        if blacklist is None:
+            pass
+        elif str(interaction.user.id) in blacklist[0].split(", "):
+            self.disable_all_items()
 
     @discord.ui.button(label = "Принять задание",
                        style = discord.ButtonStyle.green,

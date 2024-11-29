@@ -1,5 +1,11 @@
+from enum import Enum
 from classes import EmojiModes
 from colorama import Fore, Style
+
+#TODO: Переписать комментарии, заменить повсюду обращения к словарю конфига на обращение к объекту конфига; переставить импорты по конвенции.
+
+class Config():
+    pass
 
 _indent = " "
 s2 = "│"    # ├
@@ -14,7 +20,7 @@ def initialize_config(file):
 
     print(f"{color}======== ИНИЦИАЛИЗАЦИЯ КОНФИГА ========{Fore.RESET} ")
 
-    _config = {}
+    _config = Config()
 
     # Глубина словаря. Значение заменяет место, куда записываются переменные: так из {<место записи>} можно перейти на {"Роли": {<место записи>}} при необходимости.
     _level = _config    # Работает как указатель, кстати.
@@ -84,7 +90,8 @@ def initialize_config(file):
 
                 print(f"{color}{s2}{_indent}{Fore.RESET} Записываю.")
 
-                _level[name] = value
+                setattr(_level, name, value)
+                #    _level[name] = value
 
                 print(f"{color}│{Fore.RESET}")
                 print(f"{color}│{Fore.RESET}  Текущий вид словаря: {_config}. Вид _level: {_level}.")    # ╞══
@@ -95,9 +102,11 @@ def initialize_config(file):
             # Объявляет ли строка категорию имён.
             elif ":" in line:
                 print(f"{color}{s2}{_indent*2}─{Fore.RESET} Строка объявляет категорию имён.")
-
-                _level = dict()    # Переназначение _level на пустой словарь.
-                _config[line.removesuffix(":\n")] = _level    # Вкладывание _level внутрь конфига.
+                name = line.removesuffix(":\n")
+                setattr(_config, name, Config())
+                _level = getattr(_config, name)
+                #    _level = dict()    # Переназначение _level на пустой словарь.
+                #    _config[line.removesuffix(":\n")] = _level    # Вкладывание _level внутрь конфига.
 
                 print(f"{color}│{Fore.RESET}{_indent} _level перенесён. Текущий вид словаря: {_config}")
 
@@ -108,3 +117,13 @@ def initialize_config(file):
 
 config = initialize_config("config.txt")
 print(f"{color}======== КОНЕЦ ИНИЦИАЛИЗАЦИИ КОНФИГА ========{Fore.RESET}{Style.NORMAL}\n")
+
+def read_config(config: Config):
+    for name, value in config.__dict__.items():
+        print()
+        print(f"Категория \"{name}\"")
+        for name, value in value.__dict__.items():
+            print(f"{name}: {value}")
+
+# read_config(config)
+# print(config.Каналы.forum_tasks_id)

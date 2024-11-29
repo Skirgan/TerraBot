@@ -1,8 +1,8 @@
-from enum import Enum
-from classes import EmojiModes
 from colorama import Fore, Style
 
-#TODO: Переписать комментарии, заменить повсюду обращения к словарю конфига на обращение к объекту конфига; переставить импорты по конвенции.
+from classes import EmojiModes
+
+# TODO: Переписать комментарии, заменить повсюду обращения к словарю конфига на обращение к объекту конфига.
 
 class Config():
     pass
@@ -12,8 +12,8 @@ s2 = "│"    # ├
 color = Fore.WHITE + Style.BRIGHT
 color2 = Fore.CYAN
 
-def initialize_config(file):
-    """Ничего не возвращает.
+def initialize_config(file: str):
+    """:return: Config структуры config.категория.переменная = значение
     Принимает файл, проходит по всем строкам и пытается записать найденные параметры в словарь, попутно сортируя по категориям.
     Инструкция по использованию находится непосредственно в файле конфига.
     """

@@ -7,6 +7,9 @@ from classes import EmojiModes
 class Config():
     pass
 
+class Category():
+    pass
+
 _indent = " "
 s2 = "│"    # ├
 color = Fore.WHITE + Style.BRIGHT
@@ -103,7 +106,7 @@ def initialize_config(file: str):
             elif ":" in line:
                 print(f"{color}{s2}{_indent*2}─{Fore.RESET} Строка объявляет категорию имён.")
                 name = line.removesuffix(":\n")
-                setattr(_config, name, Config())
+                setattr(_config, name, Category())
                 _level = getattr(_config, name)
                 #    _level = dict()    # Переназначение _level на пустой словарь.
                 #    _config[line.removesuffix(":\n")] = _level    # Вкладывание _level внутрь конфига.

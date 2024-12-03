@@ -5,7 +5,7 @@ import discord
 
 from config import Category, config, read_config
 
-#TODO Протестировать код, расставить отступы для читаемости, переписать комментарии и написать их там, где требуется.
+#TODO Расставить отступы для читаемости, переписать комментарии и написать их там, где требуется.
 
 def get_channel_id_by_name(guild: discord.Guild, name: str) -> int | None:
     """:return: ID канала, если успешно; None — если безуспешно.

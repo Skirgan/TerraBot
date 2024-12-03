@@ -122,6 +122,9 @@ config = initialize_config("config.txt")
 print(f"{color}======== КОНЕЦ ИНИЦИАЛИЗАЦИИ КОНФИГА ========{Fore.RESET}{Style.NORMAL}\n")
 
 def read_config(config: Config):
+    """:return: Void
+    Выводит аттрибуты конфига, аттрибуты аттрибутов конфига и их значения в консоль в читаемом виде.
+    """
     for name, value in config.__dict__.items():
         print()
         print(f"Категория \"{name}\"")

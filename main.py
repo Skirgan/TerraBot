@@ -20,7 +20,7 @@ async def on_ready():
 
     guild_id = 787280396915048498
 
-    if config["Параметры"]["override_config"]:
+    if config.parameters.override_config:
         guild = get_guild_by_name(input("Включена функция перезаписи ID каналов и ролей.\nВведите название сервера: "))
         guild_id = guild.id
         override_config_ids(guild)

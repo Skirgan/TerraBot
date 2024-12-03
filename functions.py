@@ -3,9 +3,9 @@ from colorama import Fore, Style
 from bot import bot
 import discord
 
-import config
-from config import Category
+from config import Category, config, read_config
 
+#TODO Протестировать код, расставить отступы для читаемости, переписать комментарии и написать их там, где требуется.
 
 def get_channel_id_by_name(guild: discord.Guild, name: str) -> int | None:
     """:return: ID канала, если успешно; None — если безуспешно.
@@ -51,7 +51,7 @@ def get_guild_by_name(name: str) -> discord.Guild | None:
             print(f" {Fore.GREEN} Сервер {Style.BRIGHT}{name}{Style.NORMAL} найден.{Fore.RESET}")
             return _guild
 
-    print(f"{Fore.RED} Роль {Style.BRIGHT}{name}{Style.NORMAL} не найдена!{Fore.RESET}")
+    print(f"{Fore.RED} Сервер {Style.BRIGHT}{name}{Style.NORMAL} не найден!{Fore.RESET}")
     return None
 
 def override_category_ids(guild: discord.Guild, category: Category(), function: type(get_guild_by_name)):
@@ -64,14 +64,15 @@ def override_category_ids(guild: discord.Guild, category: Category(), function: 
 
     _strings = _strings.removesuffix(", ")
 
-    s = input(f"Введите названия ролей в следующем порядке: {_strings}").split(", ")
+    s = input(f"Введите названия в следующем порядке: {_strings}: ").split(", ")
 
     # Пройтись одновременно по всем переменным (var) ролей в конфиге и всем полученным через input() именам (name).
     # Каждую итерацию вызывает необходимую функцию поиска и перезаписывает значение конфига.
     for var, name in zip(f, s):
+        # print(f"Пытаюсь найти объект с именем {Style.BRIGHT}{name}{Style.NORMAL}...", end = " ")
         __new_id = function(guild, name)
         if __new_id is not None:
-            print("Заменяю старое значение на новое... ", end="")
+            print(f"Заменяю старое значение {Style.BRIGHT}{var}{Style.NORMAL} на новое... ", end=" ")
 
             try:
                 # config["Роли"][var] = __new_id
@@ -79,15 +80,16 @@ def override_category_ids(guild: discord.Guild, category: Category(), function: 
 
             except Exception as err:
                 print(f"{Fore.RED + Style.BRIGHT}Безуспешно:{Style.NORMAL} {err}{Fore.RESET}")
-                print(
-                    f"{Fore.WHITE + Style.BRIGHT}======== КОНЕЦ ПЕРЕЗАПИСИ КОНФИГА ========{Fore.RESET + Style.NORMAL}\n")
+                
                 return False
 
             else:
                 print(f"{Fore.GREEN + Style.BRIGHT}Успешно.{Fore.RESET + Style.NORMAL}")
 
         else:
+            # print(f"{Fore.RED + Style.BRIGHT}Безуспешно:{Style.NORMAL} не удалось найти объект.{Fore.RESET}")
             return False
+    return True
 
 def override_config_ids(guild: discord.Guild) -> bool:
     """:return: bool в зависимости от успеха операции.
@@ -100,57 +102,17 @@ def override_config_ids(guild: discord.Guild) -> bool:
     print(f"\n{Fore.WHITE + Style.BRIGHT}======== ПЕРЕЗАПИСЬ КОНФИГА ========{Fore.RESET + Style.NORMAL} ")
     # _config = dict(config)
 
-    # list() нужен, чтобы при изменении f не изменялся конфиг, иначе for ♥♥♥♥♥♥♥♥♥♥♥♥ и выдаёт ошибку.
-    f = list(config["Роли"].keys())
-    s = input(f"Введите названия ролей в следующем порядке: {Style.BRIGHT}activist_role_id{Style.NORMAL}, {Style.BRIGHT}administrator_role_id{Style.NORMAL},"
-              f" {Style.BRIGHT}master_role_id{Style.NORMAL}, {Style.BRIGHT}moderator_role_id{Style.NORMAL}: ").split(", ")
-
-    # Пройтись одновременно по всем переменным (var) ролей в конфиге и всем полученным через input() именам (name).
-    # Каждую итерацию вызывает необходимую функцию поиска и перезаписывает значение конфига.
-    for var, name in zip(f, s):
-        __new_id = get_role_id_by_name(guild, name)
-        if __new_id is not None:
-            print("Заменяю старое значение на новое... ", end="")
-
-            try:
-                config["Роли"][var] = __new_id
-
-            except Exception as err:
-                print(f"{Fore.RED + Style.BRIGHT}Безуспешно:{Style.NORMAL} {err}{Fore.RESET}")
-                print(f"{Fore.WHITE + Style.BRIGHT}======== КОНЕЦ ПЕРЕЗАПИСИ КОНФИГА ========{Fore.RESET + Style.NORMAL}\n")
-                return False
-
-            else:
-                print(f"{Fore.GREEN + Style.BRIGHT}Успешно.{Fore.RESET + Style.NORMAL}")
-
-        else:
-            return False
-
-    f = list(config["Каналы"].keys())
-    s = input(f"Введите названия каналов в следующем порядке: {Style.BRIGHT}channel_log_delete_id{Style.NORMAL}, {Style.BRIGHT}channel_log_hits_id{Style.NORMAL},"
-              f" {Style.BRIGHT}forum_tasks_id{Style.NORMAL}: ").split(", ")
-
-    # Тут так же
-    for var, name in zip(f, s):
-        __new_id = get_channel_id_by_name(guild, name)
-        if __new_id is not None:
-            print("Заменяю старое значение на новое... ", end="")
-
-            try:
-                config["Каналы"][var] = __new_id
-
-            except Exception as err:
-                print(f"{Fore.RED + Style.BRIGHT}Безуспешно:{Style.NORMAL} {err}{Fore.RESET}")
-                print(f"{Fore.WHITE + Style.BRIGHT}======== КОНЕЦ ПЕРЕЗАПИСИ КОНФИГА ========{Fore.RESET + Style.NORMAL}\n")
-                return False
-
-            else:
-                print(f"{Fore.GREEN + Style.BRIGHT}Успешно.{Fore.RESET + Style.NORMAL}")
-
-        else:
-            print(f"{Fore.WHITE + Style.BRIGHT}======== КОНЕЦ ПЕРЕЗАПИСИ КОНФИГА ========{Fore.RESET + Style.NORMAL}\n")
-            return False
-
-    print(f"{Fore.GREEN + Style.BRIGHT}Перезапись прошла успешно.{Fore.RESET + Style.NORMAL}")
-    print(f"{Fore.WHITE + Style.BRIGHT}======== КОНЕЦ ПЕРЕЗАПИСИ КОНФИГА ========{Fore.RESET + Style.NORMAL}\n")
+    if not override_category_ids(guild, config.roles, get_role_id_by_name):
+        print(
+                    f"{Fore.WHITE + Style.BRIGHT}======== КОНЕЦ ПЕРЕЗАПИСИ КОНФИГА ========{Fore.RESET + Style.NORMAL}\n")
+        return False
+    
+    if not override_category_ids(guild, config.roles, get_channel_id_by_name):
+        print(
+                    f"{Fore.WHITE + Style.BRIGHT}======== КОНЕЦ ПЕРЕЗАПИСИ КОНФИГА ========{Fore.RESET + Style.NORMAL}\n")
+        return False
+    
+    # for debug purposes
+    read_config(config)
+    
     return True

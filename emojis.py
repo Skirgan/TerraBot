@@ -1,7 +1,7 @@
 from classes import EmojiModes, TerraBotEmojis, Placeholders, NoEmojis
 from config import config
 
-emoji_mode = config["Параметры"]["emoji_mode"]
+emoji_mode = config.parameters.emoji_mode
 
 global emojis
 def set_emojis():

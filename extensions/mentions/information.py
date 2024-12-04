@@ -64,7 +64,7 @@ class InformationMentions(commands.Cog):
                     members_count = len(cursor.execute(f"SELECT members FROM mentions WHERE name = '{party_name}'").fetchone()[0].split(".").remove(""))
                 except: 
                     members_count = 0
-                text_for_add = f"<:profile:1297268006468190269> Название: {mention_name};\n<:administrator:1297268078375080036> Владелец: {ctx.guild.get_member(owner_id)};\n<:members:1297268054840971265> Количество подписавшихся: {members_count}.```\n"
+                text_for_add = f"<:profile:1297268006468190269> Название: {mention_name};\n<:administrator:1297268078375080036> Владелец: {ctx.guild.get_member(owner_id)};\n<:members:1297268054840971265> Количество подписавшихся: {members_count}.\n\n"
                 if only_subs:
                     if str(ctx.author.id) in cursor.execute(f"SELECT members FROM mentions WHERE name = '{mention_name}'").fetchone()[0].split("."):
                         text += text_for_add

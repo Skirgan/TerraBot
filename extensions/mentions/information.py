@@ -40,7 +40,7 @@ class InformationMentions(commands.Cog):
         else:
             await ctx.respond(f"{emojis.cross} Такой рассылки не существует.")
 
-    @subcommand("рассылки")
+    @subcommand("рассылки", independent=True)
     @discord.slash_command(name = "список_рассылок")
     async def mentions_list(
         self,

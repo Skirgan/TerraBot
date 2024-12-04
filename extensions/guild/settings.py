@@ -104,7 +104,7 @@ class TaskSettings(commands.Cog):
     def __init__(self, bot: discord.Bot):
         self.bot = bot
 
-    @subcommand("гильдия")
+    @subcommand("гильдия", independent=True)
     @discord.slash_command(name = "настроить_задание")
     async def task_settings(
         self,

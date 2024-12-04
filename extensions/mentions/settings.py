@@ -87,7 +87,7 @@ class SettingsMentions(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @subcommand("рассылки")
+    @subcommand("рассылки", independent=True)
     @discord.slash_command(name = "настройка_рассылки")
     async def mentions_settings(
         self,

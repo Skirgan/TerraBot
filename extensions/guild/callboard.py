@@ -143,7 +143,7 @@ class Callboard(commands.Cog):
         ):
         await ctx.defer(ephemeral = True)
 
-        if ctx.author.get_role(config["Роли"]["administrator_role_id"]):
+        if ctx.author.get_role(config.roles.administrator_role_id):
             await ctx.respond(f"{emojis.staff} Публикую доску объявлений.")
             callboard = await ctx.send(
                 embed = discord.Embed(

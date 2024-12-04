@@ -6,7 +6,7 @@ from discord.ext import commands
 
 from config import config
 
-forum_tasks_id = config["Каналы"]["forum_tasks_id"]
+forum_tasks_id = config.channels.forum_tasks_id
 
 class EventsModeration(commands.Cog):
     def __init__(self, bot):

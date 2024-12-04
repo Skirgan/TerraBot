@@ -12,7 +12,7 @@ class UserCommandsParties(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @subcommand("группы")
+    @subcommand("группы", independent=True)
     @discord.slash_command(name = "покинуть_группу")
     async def party_leave(
         self,

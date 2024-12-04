@@ -10,9 +10,9 @@ from database import connection_hits as connection, cursor_hits as cursor
 from .functions import is_master, create_hit_bar
 from emojis import emojis
 
-master_role_id = config["Роли"]["master_role_id"]
-administrator_role_id = config["Роли"]["administrator_role_id"]
-channel_log_hits_id = config["Каналы"]["channel_log_hits_id"]
+master_role_id = config.roles.master_role_id
+administrator_role_id = config.roles.administrator_role_id
+channel_log_hits_id = config.channels.channel_log_hits_id
 
 class ReduceHitsModal(discord.ui.Modal):
     def __init__(self, member: discord.Member, bot: discord.Bot):
@@ -402,7 +402,7 @@ class Hits(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @subcommand("гильдия")
+    @subcommand("гильдия", independent=True)
     @discord.slash_command(name = "изменить_хиты")
     async def hits_settings(
         self,

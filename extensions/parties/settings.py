@@ -9,7 +9,7 @@ from database import connection_parties as connection, cursor_parties as cursor
 from emojis import emojis
 
 
-moderator_role_id = config["Роли"]["moderator_role_id"]
+moderator_role_id = config.roles.moderator_role_id
 class PartyOwnerView(discord.ui.View):
     def __init__(self, party_name):
         super().__init__()
@@ -173,7 +173,7 @@ class SettingsParties(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @subcommand("группы")
+    @subcommand("группы", independent=True)
     @discord.slash_command(name = "настройка_группы")
     async def parties_settings(
         self,

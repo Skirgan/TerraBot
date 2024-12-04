@@ -25,7 +25,7 @@ async def on_ready():
         guild_id = guild.id
         override_config_ids(guild)
 
-    administrator_role_id = config["Роли"]["administrator_role_id"]
+    administrator_role_id = config.roles.administrator_role_id
 
     black_list_files = ["__init__.py", "functions.py"]
     for directory, directories, files in os.walk("./extensions"):
@@ -33,7 +33,7 @@ async def on_ready():
             if file.endswith(".py") and file not in black_list_files:
                 print(f"{Fore.BLUE}·{Fore.RESET} {Fore.CYAN}Попытка загрузки{Fore.RESET}: {directory[2:]}.{file}", end = "")
                 try:
-                    str_for_load = f"{directory[2:]}.{file[:-3]}".replace("\\", ".")
+                    str_for_load = f"{directory[2:]}/{file[:-3]}".replace("\\", ".").replace("/", ".")
                     bot.load_extension(str_for_load)
                     print(f" —— {Fore.GREEN}успешно{Fore.RESET}")
                 except Exception as err:

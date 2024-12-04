@@ -11,7 +11,7 @@ class InformationParties(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @subcommand("группы")
+    @subcommand("группы", independent=True)
     @discord.slash_command(name = "информация_о_группе")
     async def parties_information(
         self,

@@ -9,8 +9,8 @@ from .functions import is_master
 from emojis import emojis
 
 
-master_role_id = config["Роли"]["master_role_id"]
-administrator_role_id = config["Роли"]["administrator_role_id"]
+master_role_id = config.roles.master_role_id
+administrator_role_id = config.roles.administrator_role_id
 
 class MasterCommands(commands.Cog):
     def __init__(self, bot):

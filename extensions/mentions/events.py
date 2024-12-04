@@ -5,7 +5,7 @@ from config import config
 from database import connection_mentions as connection, cursor_mentions as cursor
 from emojis import emojis
 
-channel_log_delete_id = config["Каналы"]["channel_log_delete_id"]
+channel_log_delete_id = config.channels.channel_log_delete_id
 
 class EventsMentions(commands.Cog):
     def __init__(self, bot, channel_log_delete_id):

@@ -9,8 +9,8 @@ from database import connection_mentions as connection, cursor_mentions as curso
 from emojis import emojis
 
 
-moderator_role_id = config["Роли"]["moderator_role_id"]
-channel_log_delete_id = config["Каналы"]["channel_log_delete_id"]
+moderator_role_id = config.roles.moderator_role_id
+channel_log_delete_id = config.channels.channel_log_delete_id
 
 class MentionNameModal(discord.ui.Modal):
     def __init__(self, mention_name):

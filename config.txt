@@ -8,6 +8,7 @@
 parameters:
 # Опции: terra_bot, placeholder, none.
 emoji_mode = EmojiModes.terra_bot
+offtop_deletion_countdown = 5
 override_config = False
 
 roles:

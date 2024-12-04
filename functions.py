@@ -102,7 +102,7 @@ def override_config_ids(guild: discord.Guild) -> bool:
     print(f"\n{Fore.WHITE + Style.BRIGHT}======== ПЕРЕЗАПИСЬ КОНФИГА ========{Fore.RESET + Style.NORMAL} ")
     # _config = dict(config)
 
-    if not override_category_ids(guild, config.roles, get_role_id_by_name):
+    if not override_category_ids(guild, config.channels, get_channel_id_by_name):
         print(
                     f"{Fore.WHITE + Style.BRIGHT}======== КОНЕЦ ПЕРЕЗАПИСИ КОНФИГА ========{Fore.RESET + Style.NORMAL}\n")
         return False

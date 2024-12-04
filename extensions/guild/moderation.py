@@ -7,6 +7,7 @@ from discord.ext import commands
 from config import config
 
 forum_tasks_id = config.channels.forum_tasks_id
+countdown = config.parameters.offtop_deletiob_countdown
 
 class EventsModeration(commands.Cog):
     def __init__(self, bot):
@@ -18,7 +19,7 @@ class EventsModeration(commands.Cog):
             if message.channel.category_id == forum_tasks_id:
                async for message_in_channel_history in message.channel.history(oldest_first = True):
                    if message_in_channel_history.content.startswith("((") and message_in_channel_history.author == message.author and message_in_channel_history != message:
-                       await asyncio.sleep(10)
+                       await asyncio.sleep(countdown)
                        await message_in_channel_history.delete()
                        break
         except AttributeError:

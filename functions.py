@@ -1,16 +1,17 @@
-from colorama import Fore, Style
+import copy
 
+from colorama import Fore, Style
 from bot import bot
 import discord
 
-from config import Category, config, read_config
+from config import Section, config, read_config
 
 #TODO Расставить отступы для читаемости, переписать комментарии и написать их там, где требуется.
 
 def get_channel_id_by_name(guild: discord.Guild, name: str) -> int | None:
     """:return: ID канала, если успешно; None — если безуспешно.
     :param guild: Сервер, внутри которого ищется канал.
-    :param name: Имя искомого сервера.
+    :param name: Имя искомого канала.
     """
 
     print(f"{Fore.BLUE}·{Fore.RESET}{Fore.CYAN} Поиск канала {name}...{Fore.RESET}", end="")
@@ -26,7 +27,7 @@ def get_channel_id_by_name(guild: discord.Guild, name: str) -> int | None:
 def get_role_id_by_name(guild: discord.Guild, name: str) -> int | None:
     """:return: ID роли, если успешно; None — если безуспешно.
     :param guild: Сервер, внутри которого ищется роль.
-    :param name: Имя искомого сервера.
+    :param name: Имя искомой роли.
     """
 
     print(f"{Fore.BLUE}·{Fore.RESET}{Fore.CYAN} Поиск роли {name}...{Fore.RESET}", end="")
@@ -37,6 +38,24 @@ def get_role_id_by_name(guild: discord.Guild, name: str) -> int | None:
             return role.id
 
     print(f"{Fore.RED} Роль {Style.BRIGHT}{name}{Style.NORMAL} не найдена!{Fore.RESET}")
+    return None
+
+def get_category_id_by_name(guild: discord.Guild, name: str) -> int | None:
+    """:return: ID категории, если успешно; None — если безуспешно.
+    :param guild: Сервер, внутри которого ищется роль.
+    :param name: Имя искомой категории.
+    """
+
+    print(f"{Fore.BLUE}·{Fore.RESET}{Fore.CYAN} Поиск категории {name}...{Fore.RESET}", end="")
+    print(guild.categories)
+    print()
+    for category in guild.categories:
+        print(category)
+        if category.name == name:
+            print(f"{Fore.GREEN} Категория {Style.BRIGHT}{name}{Style.NORMAL} найдена.{Fore.RESET}")
+            return category.id
+
+    print(f"{Fore.RED} Категория  {Style.BRIGHT}{name}{Style.NORMAL} не найдена!{Fore.RESET}")
     return None
 
 def get_guild_by_name(name: str) -> discord.Guild | None:
@@ -54,9 +73,9 @@ def get_guild_by_name(name: str) -> discord.Guild | None:
     print(f"{Fore.RED} Сервер {Style.BRIGHT}{name}{Style.NORMAL} не найден!{Fore.RESET}")
     return None
 
-def override_category_ids(guild: discord.Guild, category: Category(), function: type(get_guild_by_name)):
+def override_section_ids(guild: discord.Guild, section: Section(), function: type(get_guild_by_name)):
     # f = list(config["Роли"].keys())
-    f = category.__dict__.keys()
+    f = section.__dict__.keys()
 
     _strings = ""
     for _s in f:
@@ -76,7 +95,7 @@ def override_category_ids(guild: discord.Guild, category: Category(), function: 
 
             try:
                 # config["Роли"][var] = __new_id
-                setattr(category, var, __new_id)
+                setattr(section, var, __new_id)
 
             except Exception as err:
                 print(f"{Fore.RED + Style.BRIGHT}Безуспешно:{Style.NORMAL} {err}{Fore.RESET}")
@@ -98,21 +117,24 @@ def override_config_ids(guild: discord.Guild) -> bool:
     """
 
     global config
+    _config = copy.deepcopy(config)
 
     print(f"\n{Fore.WHITE + Style.BRIGHT}======== ПЕРЕЗАПИСЬ КОНФИГА ========{Fore.RESET + Style.NORMAL} ")
     # _config = dict(config)
 
-    if not override_category_ids(guild, config.roles, get_role_id_by_name):
-        print(
-                    f"{Fore.WHITE + Style.BRIGHT}======== КОНЕЦ ПЕРЕЗАПИСИ КОНФИГА ========{Fore.RESET + Style.NORMAL}\n")
+    if \
+    override_section_ids(guild, _config.roles, get_role_id_by_name) and \
+    override_section_ids(guild, _config.channels, get_channel_id_by_name) and \
+    override_section_ids(guild, _config.categories, get_category_id_by_name):
+
+        # for debug purposes
+        config = copy.deepcopy(_config)
+        read_config(config)
+        return True
+    
+    i = input("Перезапись конфига прервана. Использовать неизменённый конфиг (y/yes) или начать сначала (enter)?\n").lower() 
+    if i == "y" or i == "yes":
         return False
+        print(f"{Fore.WHITE + Style.BRIGHT}======== КОНЕЦ ПЕРЕЗАПИСИ КОНФИГА ========{Fore.RESET + Style.NORMAL}\n")
     
-    if not override_category_ids(guild, config.channels, get_channel_id_by_name):
-        print(
-                    f"{Fore.WHITE + Style.BRIGHT}======== КОНЕЦ ПЕРЕЗАПИСИ КОНФИГА ========{Fore.RESET + Style.NORMAL}\n")
-        return False
-    
-    # for debug purposes
-    read_config(config)
-    
-    return True
+    override_config_ids(guild)

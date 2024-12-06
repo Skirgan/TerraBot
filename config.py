@@ -1,6 +1,10 @@
+import copy
+
 from colorama import Fore, Style
+import discord
 
 from classes import EmojiModes
+from functions import *
 
 # TODO: Переписать комментарии, заменить повсюду обращения к словарю конфига на обращение к объекту конфига.
 
@@ -121,15 +125,83 @@ def initialize_config(file: str):
 config = initialize_config("config.txt")
 print(f"{color}======== КОНЕЦ ИНИЦИАЛИЗАЦИИ КОНФИГА ========{Fore.RESET}{Style.NORMAL}\n")
 
-def read_config(config: Config):
+def read_config():
     """:return: Void
     Выводит аттрибуты конфига, аттрибуты аттрибутов конфига и их значения в консоль в читаемом виде.
     """
+    global config
     for name, value in config.__dict__.items():
         print()
         print(f"Категория \"{name}\"")
         for name, value in value.__dict__.items():
             print(f"{name}: {value}")
+
+def override_section_ids(guild: discord.Guild, section: Section(), function: type(get_guild_by_name)):
+    # f = list(config["Роли"].keys())
+    f = section.__dict__.keys()
+
+    _strings = ""
+    for _s in f:
+        _strings += f"{Style.BRIGHT}" + _s + f"{Style.NORMAL}, "
+
+    _strings = _strings.removesuffix(", ")
+
+    s = input(f"Введите названия в следующем порядке: {_strings}: ").split(", ")
+
+    # Пройтись одновременно по всем переменным (var) ролей в конфиге и всем полученным через input() именам (name).
+    # Каждую итерацию вызывает необходимую функцию поиска и перезаписывает значение конфига.
+    for var, name in zip(f, s):
+        # print(f"Пытаюсь найти объект с именем {Style.BRIGHT}{name}{Style.NORMAL}...", end = " ")
+        __new_id = function(guild, name)
+        if __new_id is not None:
+            print(f"Заменяю старое значение {Style.BRIGHT}{var}{Style.NORMAL} на новое... ", end=" ")
+
+            try:
+                # config["Роли"][var] = __new_id
+                setattr(section, var, __new_id)
+
+            except Exception as err:
+                print(f"{Fore.RED + Style.BRIGHT}Безуспешно:{Style.NORMAL} {err}{Fore.RESET}")
+                
+                return False
+
+            else:
+                print(f"{Fore.GREEN + Style.BRIGHT}Успешно.{Fore.RESET + Style.NORMAL}")
+
+        else:
+            # print(f"{Fore.RED + Style.BRIGHT}Безуспешно:{Style.NORMAL} не удалось найти объект.{Fore.RESET}")
+            return False
+    return True
+
+
+def override_config_ids(guild: discord.Guild) -> bool:
+    """:return: bool в зависимости от успеха операции.
+    Перезаписывает все ID ролей и каналов на новые, полученные при помощи названий.
+    :param guild: Сервер, которому принадлежат ID ролей и каналов, что будут перезаписаны.
+    """
+
+    print(f"\n{Fore.WHITE + Style.BRIGHT}======== ПЕРЕЗАПИСЬ КОНФИГА ========{Fore.RESET + Style.NORMAL} ")
+    # _config = dict(config)
+
+    global config
+    _config = copy.deepcopy(config)
+
+    if \
+    override_section_ids(guild, _config.roles, get_role_id_by_name) and \
+    override_section_ids(guild, _config.channels, get_channel_id_by_name) and \
+    override_section_ids(guild, _config.categories, get_category_id_by_name):
+
+        # for debug purposes
+        config = copy.deepcopy(_config)
+        read_config()
+        return True
+    
+    i = input("Перезапись конфига прервана. Использовать неизменённый конфиг (y/yes) или начать сначала (enter)?\n").lower() 
+    if i == "y" or i == "yes":
+        return False
+        print(f"{Fore.WHITE + Style.BRIGHT}======== КОНЕЦ ПЕРЕЗАПИСИ КОНФИГА ========{Fore.RESET + Style.NORMAL}\n")
+    
+    override_config_ids(guild)
 
 # read_config(config)
 # print(config.Каналы.forum_tasks_id)

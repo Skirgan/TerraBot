@@ -6,8 +6,8 @@ from colorama import Fore, Style
 
 from bot import bot
 from token_file import token
-from config import config
-from functions import override_config_ids, get_guild_by_name
+from config import override_config_ids, config
+from functions import get_guild_by_name
 from emojis import emojis
 
 administrator_role_id = None
@@ -17,6 +17,7 @@ bot.auto_sync_commands = False
 @bot.event
 async def on_ready():
     global administrator_role_id
+    global config
 
     guild_id = 787280396915048498
 
@@ -24,6 +25,8 @@ async def on_ready():
         guild = get_guild_by_name(input("Включена функция перезаписи ID каналов и ролей.\nВведите название сервера: "))
         guild_id = guild.id
         override_config_ids(guild)
+        
+        from config import config
 
     administrator_role_id = config.roles.administrator_role_id
 

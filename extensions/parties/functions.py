@@ -1,9 +1,5 @@
-import discord
-
-from config import config
+from config import administrator_role_id, activist_role_id
 from database import connection_parties as connection, cursor_parties as cursor
-
-activist_role_id = config.roles.activist_role_id
 
 async def autocomplete_party_names(ctx):
 	return [party[0] for party in cursor.execute(f"SELECT name FROM parties").fetchall()]
@@ -12,7 +8,7 @@ def is_activist(ctx):
 	return ctx.author.get_role(activist_role_id) is not None
 
 def is_party_owner(ctx, party_name):
-	return ctx.author.id == cursor.execute(f"SELECT owner_id FROM parties WHERE name = '{party_name}'").fetchone()[0]
+	return ctx.author.id == cursor.execute(f"SELECT owner_id FROM parties WHERE name = '{party_name}'").fetchone()[0] or bool(ctx.author.get_role(administrator_role_id))
 		
 def is_party_member(member, party_name):
 	return str(member.id) in cursor.execute(f"SELECT members FROM parties WHERE name = '{party_name}'").fetchone()[0].split(", ")

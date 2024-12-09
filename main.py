@@ -1,55 +1,50 @@
-import datetime
+﻿import datetime
 import discord
 from discord.ext import commands
+from pycord.multicog import Bot
 import os
-from colorama import Fore, Style
+from colorama import init, Fore, Style
+from extensions import *
+from config import token, administrator_role_id
 
-from bot import bot
-from token_file import token
-from config import override_config_ids, config, read_config, override_config
-from functions import get_guild_by_name, extensions_generator, print_commands
-from emojis import emojis
+init(convert = True)
 
-administrator_role_id = None
+intents = discord.Intents.default()
+intents = discord.Intents.all()
+bot = Bot(intents = intents)
 bot.auto_sync_commands = False
-
-extensions = None
 
 @bot.event
 async def on_ready():
-    global administrator_role_id
-    global config
-    global extensions
-
-    guild_id = 787280396915048498
-
-    if config.parameters.override_config:
-        guild = get_guild_by_name(input("Включена функция перезаписи ID каналов и ролей.\nВведите название сервера: "))
-        guild_id = guild.id
-        override_config_ids(guild)
-        
-        from config import config
-
-    administrator_role_id = config.roles.administrator_role_id
-    extensions = extensions_generator()
-
-#    black_list_files = ["__init__.py", "functions.py"]
-#    for directory, directories, files in os.walk("./extensions"):
-#        for file in os.listdir(directory):
-#            if file.endswith(".py") and file not in black_list_files:
-#                print(f"{Fore.BLUE}·{Fore.RESET} {Fore.CYAN}Попытка загрузки{Fore.RESET}: {directory[2:]}.{file}", end = "")
-#                try:
-#                    str_for_load = f"{directory[2:]}/{file[:-3]}".replace("\\", ".").replace("/", ".")
-#                    bot.load_extension(str_for_load)
-    for extension in extensions:
-        bot.load(extension)
-
+    black_list_files = ["__init__.py", "functions.py"]
+    for directory, directories, files in os.walk("./extensions"):
+        for file in os.listdir(directory):
+            if file.endswith(".py") and file not in black_list_files:
+                print(f"{Fore.BLUE}·{Fore.RESET} {Fore.CYAN}Попытка загрузки{Fore.RESET}: {directory[2:]}.{file}", end = "")
+                try:
+                    str_for_load = f"{directory[2:]}.{file[:-3]}".replace("\\", ".")
+                    bot.load_extension(str_for_load)
+                    print(f" —— {Fore.GREEN}успешно{Fore.RESET}")
+                except:
+                    print(f" —— {Fore.RED}безуспешно{Fore.RESET}")
     if not bot.auto_sync_commands:
-        await bot.sync_commands(guild_ids = [guild_id])
+        await bot.sync_commands(guild_ids = [787280396915048498])
 
-    print_commands(bot)
+    print(f"\nПодключённые команды:")
+    for cog in list(bot.cogs.keys()):
+        for command in bot.get_cog(cog).get_commands():
+            if type(command) == discord.SlashCommand:
+                print(f"{Fore.BLUE}·{Fore.RESET} {Fore.CYAN}{command}{Fore.RESET} (команда)")
+            elif type(command) == discord.SlashCommandGroup:
+                print(f"{Fore.BLUE}·{Fore.RESET} {Fore.CYAN}{command}{Fore.RESET} (группа):")
+                for command_in_group in command.walk_commands():
+                    print(f"    {Fore.BLUE}·{Fore.RESET} {Fore.CYAN}{command_in_group}{Fore.RESET} (команда)")
+            else:
+                print(type(command))
+        for event in bot.get_cog(cog).get_listeners():
+            print(f"{Style.DIM}{Fore.YELLOW}·{Fore.RESET}{Style.RESET_ALL} {Fore.YELLOW}{event[0]}{Fore.RESET} (обработчик)")
 
-    await bot.change_presence(activity = discord.Activity(type = discord.ActivityType.custom, state =f"Запуск произведён {datetime.datetime.now().strftime('%H:%M:%S')}"))
+    await bot.change_presence(activity = discord.Activity(type = discord.ActivityType.custom, state = f"Запуск произведён {datetime.datetime.now().strftime('%H:%M:%S')}"))
 
 class AdminSettings(commands.Cog):
     def __init__(self, bot):
@@ -87,13 +82,13 @@ class AdminSettings(commands.Cog):
         if ctx.author.get_role(administrator_role_id):
             response = await ctx.respond(embed = discord.Embed(
                 colour = discord.Colour.blurple(),
-                description = f"{emojis.staff} Приступаю к загрузке \"`{cog_path}`\"."
+                description = f"<:staff:1297268197581520926> Приступаю к загрузке \"`{cog_path}`\"."
                 ))
             try:
                 bot.load_extension(cog_path)
                 response_embed = discord.Embed(
                     colour = discord.Colour.green(),
-                    description = f"{emojis.check} \"`{cog_path}`\" загружен. "
+                    description = f"<:check:1297268217303007314> \"`{cog_path}`\" загружен. "
                     )
                 response_embed.add_field(
                     name = "Подключённые команды:",
@@ -103,10 +98,10 @@ class AdminSettings(commands.Cog):
             except Exception as e:
                 await response.edit(embed = discord.Embed(
                     colour = discord.Colour.red(),
-                    description = f"{emojis.cross} `{e}`"
+                    description = f"<:cross:1297268043667476490> `{e}`"
                     ))
         else:
-            await ctx.respond(f"{emojis.block} Вы не являетесь администратором.")
+            await ctx.respond(f"<:block:1297268337264300094> Вы не являетесь администратором.")
 
     @settings.command(name = "unload")
     async def unload_cog(
@@ -122,13 +117,13 @@ class AdminSettings(commands.Cog):
         if ctx.author.get_role(administrator_role_id):
             response = await ctx.respond(embed = discord.Embed(
                 colour = discord.Colour.blurple(),
-                description = f"{emojis.staff} Приступаю к загрузке \"`{cog_path}`\"."
+                description = f"<:staff:1297268197581520926> Приступаю к загрузке \"`{cog_path}`\"."
                 ))
             try:
                 bot.unload_extension(cog_path)
                 response_embed = discord.Embed(
                     colour = discord.Colour.green(),
-                    description = f"{emojis.check} \"`{cog_path}`\" отгружен. "
+                    description = f"<:check:1297268217303007314> \"`{cog_path}`\" отгружен. "
                     )
                 response_embed.add_field(
                     name = "Подключённые команды:",
@@ -138,10 +133,10 @@ class AdminSettings(commands.Cog):
             except Exception as e:
                 await response.edit(embed = discord.Embed(
                     colour = discord.Colour.red(),
-                    description = f"{emojis.cross} `{e}`"
+                    description = f"<:cross:1297268043667476490> `{e}`"
                     ))
         else:
-            await ctx.respond(f"{emojis.block} Вы не являетесь администратором.")
+            await ctx.respond(f"<:block:1297268337264300094> Вы не являетесь администратором.")
 
     @settings.command(name = "reload")
     async def reload_cog(
@@ -157,14 +152,14 @@ class AdminSettings(commands.Cog):
         if ctx.author.get_role(administrator_role_id):
             response = await ctx.respond(embed = discord.Embed(
                 colour = discord.Colour.blurple(),
-                description = f"{emojis.staff} Приступаю к загрузке \"`{cog_path}`\"."
+                description = f"<:staff:1297268197581520926> Приступаю к загрузке \"`{cog_path}`\"."
                 ))
             try:
                 bot.unload_extension(cog_path)
                 bot.load_extension(cog_path)
                 response_embed = discord.Embed(
                     colour = discord.Colour.green(),
-                    description = f"{emojis.check} \"`{cog_path}`\" перезагружен. "
+                    description = f"<:check:1297268217303007314> \"`{cog_path}`\" перезагружен. "
                     )
                 response_embed.add_field(
                     name = "Подключённые команды:",
@@ -174,65 +169,10 @@ class AdminSettings(commands.Cog):
             except Exception as e:
                 await response.edit(embed = discord.Embed(
                     colour = discord.Colour.red(),
-                    description = f"{emojis.cross} `{e}`"
+                    description = f"<:cross:1297268043667476490> `{e}`"
                     ))
         else:
-            await ctx.respond(f"{emojis.block} Вы не являетесь администратором.")
-
-    @settings.command(name = "upload")
-    async def reload_cog(
-        self,
-        ctx: discord.ApplicationContext,
-        file: discord.Option(
-            discord.SlashCommandOptionType.attachment,
-            name = "config",
-            required = True
-        )):
-        await ctx.defer()
-        extensions = extensions_generator()
-
-        if ctx.author.get_role(administrator_role_id):
-            response = await ctx.respond(embed = discord.Embed(
-                colour = discord.Colour.blurple(),
-                description = f"{emojis.staff} Приступаю к перезагрузке всего."
-                ))
-
-            try:
-                print("Загружаю новый конфиг:")
-                override_config(await file.read())
-                print("Загружен новый конфиг:")
-                read_config()
-                print()
-                print("Перезагружаю расширения:")
-                for extension in extensions:
-                    bot.unload_extension(extension)
-                    bot.load(extension)
-                print("Расширения перезагружены:")
-                print_commands(bot)
-            except Exception as e:
-                print(e)
-                await response.edit(embed = discord.Embed(
-                    colour = discord.Colour.red(),
-                    description = f"{emojis.cross} `{e}`"
-                    ))
-            try:
-                response_embed = discord.Embed(
-                        colour = discord.Colour.green(),
-                        description = f"{emojis.check} \"`Всё  перезагружено. "
-                    )
-                response_embed.add_field(
-                    name = "Подключённые команды:",
-                    value = self.generate_commands_list(self.bot, ctx)
-                    )
-                await response.edit(embed = response_embed)
-            except Exception as e:
-                await response.edit(embed = discord.Embed(
-                    colour = discord.Colour.red(),
-                    description = f"{emojis.cross} `{e}`"
-                    ))
-        else:
-            await ctx.respond(f"{emojis.block} Вы не являетесь администратором.")
- 
+            await ctx.respond(f"<:block:1297268337264300094> Вы не являетесь администратором.")
 
 bot.add_cog(AdminSettings(bot))
 bot.run(token)

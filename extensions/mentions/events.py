@@ -1,11 +1,8 @@
 ﻿import discord
 from discord.ext import commands
 
-from config import config
+from config import channel_log_delete_id
 from database import connection_mentions as connection, cursor_mentions as cursor
-from emojis import emojis
-
-channel_log_delete_id = config.channels.channel_log_delete_id
 
 class EventsMentions(commands.Cog):
     def __init__(self, bot, channel_log_delete_id):
@@ -22,7 +19,7 @@ class EventsMentions(commands.Cog):
                 if len(mention_members) == 1:
                     cursor.execute(f"DELETE FROM mentions WHERE name = '{mention_name}'")
                     connection.commit()
-                    await self.channel_log_delete.send(f"{emojis.delete} Рассылка \"`{mention_name}`\" была удалена автоматически.")
+                    await self.channel_log_delete.send(f"<:delete:1297268016827858954> Рассылка \"`{mention_name}`\" была удалена автоматически.")
                 else:
                     cursor.execute(f"UPDATE mentions SET members = '{'.'.join(mention_members)}' WHERE name = '{mention_name}'")
                     connection.commit()

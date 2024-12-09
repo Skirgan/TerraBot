@@ -2,15 +2,13 @@ import discord
 from discord.ui import Button, View
 from discord.ext import commands
 
+from config import administrator_role_id
 from database import connection_tasks as connection, cursor_tasks as cursor
-from emojis import emojis
-from config import config
-
 
 class TaskView(discord.ui.View):
-    def __init__(self, position, interaction):
+    def __init__(self, position, interaction: discord.Integration):
         super().__init__()
-        self.timeout = None
+        self.timeout = float("inf")
         self.disable_on_timeout = False
         self.position = position
         self.role_id = cursor.execute(f"SELECT role_id FROM tasks WHERE position = {self.position}").fetchone()[0]
@@ -19,26 +17,25 @@ class TaskView(discord.ui.View):
         blacklist = cursor.execute(f"SELECT blacklist FROM tasks WHERE position = {self.position}").fetchone()
         if limit_of_members_fetchone is None:
             pass
-        elif limit_of_members_fetchone[0] <= len(self.role.members):
+        elif int(limit_of_members_fetchone[0] or (len(self.role.members) + 1)) <= len(self.role.members):
             self.disable_all_items()
-        if blacklist is None:
+        if blacklist[0] is None:
             pass
         elif str(interaction.user.id) in blacklist[0].split(", "):
             self.disable_all_items()
 
     @discord.ui.button(label = "Принять задание",
                        style = discord.ButtonStyle.green,
-                       emoji = f"{emojis.like}")
+                       emoji = "<:like:1297268354570260611>"
+                       )
     async def accept_callback(self, button, interaction):
-        role_id = cursor.execute(f"SELECT role_id FROM tasks WHERE position = {self.position}").fetchone()[0]
-        role = interaction.guild.get_role(role_id)
-        if interaction.user.get_role(role_id) is None:
-            await interaction.user.add_roles(role)
+        if interaction.user.get_role(self.role_id) is None:
+            await interaction.user.add_roles(self.role)
             await interaction.respond("*Преисполнившись прежде всего внутренней уверенностью в том, что вам по плечу предлагаемое дело, вы сворачиваете лист и вкладываете в свободный карман, следом же выступая навстречу приключениям.*", ephemeral = True)
         else:
             await interaction.respond(
                 embed = discord.Embed(
-                    description = f"{emojis.cross} Вы уже приняли это задание.",
+                    description = "<:cross:1297268043667476490> Вы уже приняли это задание.",
                     colour = discord.Colour.red()),
                 ephemeral = True
                 )
@@ -46,7 +43,7 @@ class TaskView(discord.ui.View):
 class CallboardView(discord.ui.View):
     def __init__(self):
         super().__init__()
-        self.timeout = None
+        self.timeout = float("inf")
 
     @discord.ui.select(
         placeholder = "Сорвать листок...",
@@ -86,7 +83,7 @@ class CallboardView(discord.ui.View):
             await interaction.respond(
                 "*Ваш любопытствующий взор привлекается загадочным старинным свёртком, от которого так и веет тайной. Вы прикасаетесь к пергаменту с необъясненным трепетом и разворачиваете его, дабы ознакомиться с предполагаемым заданием. Это же задание, а не древний манускрипт, попавший сюда по чьей-то дурной ошибке?..*",
                 embed = discord.Embed(description = description),
-                view = TaskView(1) if description != description_none else None,
+                view = TaskView(1, interaction) if description != description_none else None,
                 ephemeral = True
                 )
         if choice == "2_task":
@@ -96,7 +93,7 @@ class CallboardView(discord.ui.View):
             await interaction.respond(
                 "*После недолгих раздумий вы срываете один из листов на богато выделенной доске, перечитывая текст приглянувшегося задания уже как во второй раз, но повдумчивей и внимательней. А потом ещё раз, ибо задания гильдии авантюристов не про то, чтобы выйти из деревни Дураково до города Плутовиль. Стоит взвесить риск... Итак, что же тут у нас?*",
                 embed = discord.Embed(description = description),
-                view = TaskView(2) if description != description_none else None,
+                view = TaskView(2, interaction) if description != description_none else None,
                 ephemeral = True
                 )
         if choice == "3_task":
@@ -106,7 +103,7 @@ class CallboardView(discord.ui.View):
             await interaction.respond(
                 "*Ваши вороньи инстинкты заставляют обратить внимание первом делом именно на поблёскивающее украшение, которым оказался прибит лист бумаги. Может эту штучку себе оставить, никто же не заметит?..*",
                 embed = discord.Embed(description = description),
-                view = TaskView(3) if description != description_none else None,
+                view = TaskView(3, interaction) if description != description_none else None,
                 ephemeral = True
                 )
         if choice == "4_task":
@@ -116,7 +113,7 @@ class CallboardView(discord.ui.View):
             await interaction.respond(
                 "*Сознание, тяготеющее к необычайному и броскому из-за позывов страстей к новизне и авантюрам, смыкает свою концентрацию именно на этом таинственном клочке бумаги. Наверняка так и выглядит билет в приключения.*",
                 embed = discord.Embed(description = description),
-                view = TaskView(4) if description != description_none else None,
+                view = TaskView(4, interaction) if description != description_none else None,
                 ephemeral = True
                 )
         if choice == "5_task":
@@ -126,7 +123,7 @@ class CallboardView(discord.ui.View):
             await interaction.respond(
                 "*Вся эта сплошная бумажная волокита порядком вас утомили и эти задания от богатеев в замках порядком достали! Пора бы развеяться среди тех, кто явно не пресмыкается перед всеми этими \"новшествами\". Посмотрим...*",
                 embed = discord.Embed(description = description),
-                view = TaskView(5) if description != description_none else None,
+                view = TaskView(5, interaction) if description != description_none else None,
                 ephemeral = True
                 )
 
@@ -143,8 +140,8 @@ class Callboard(commands.Cog):
         ):
         await ctx.defer(ephemeral = True)
 
-        if ctx.author.get_role(config.roles.administrator_role_id):
-            await ctx.respond(f"{emojis.staff} Публикую доску объявлений.")
+        if ctx.author.get_role(administrator_role_id):
+            await ctx.respond("<:staff:1297268197581520926> Публикую доску объявлений.")
             callboard = await ctx.send(
                 embed = discord.Embed(
                     description = "*Вы подходите к доске объявлений, что до тошноты сделана идеально всеми теми мастерами, которые выделывали сей табель и дополняли тот своим материалом. Было трудно ожидать нечто иное от тщеславного дома Вокма, что опутал своей гильдией весь континент. Что ж, работа у них найдётся для каждого, а посему вам остаётся лишь выбрать, где прольётся ваша кровь в погоне за звонкой монетой.*",
@@ -152,7 +149,7 @@ class Callboard(commands.Cog):
                 view = CallboardView()
                 )
         else:
-            await ctx.respond(f"{emojis.cross} Вы не являетесь лордом.")
+            await ctx.respond(f"<:block:1297268337264300094> Вы не являетесь лордом.")
 
 def setup(bot):
     bot.add_cog(Callboard(bot))

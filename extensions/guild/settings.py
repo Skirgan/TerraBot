@@ -2,14 +2,10 @@ import discord
 from discord.ui import Button, View
 from discord.ext import commands
 from pycord.multicog import subcommand
+
+from config import master_role_id, administrator_role_id
 from database import connection_tasks as connection, cursor_tasks as cursor
-
-from config import config
 from .functions import is_master
-from emojis import emojis
-
-master_role_id = config.roles.master_role_id
-administrator_role_id = config.roles.administrator_role_id
 
 class SetLimitModal(discord.ui.Modal):
     def __init__(self, dm_id: int, bot: discord.Bot):
@@ -32,7 +28,7 @@ class SetLimitModal(discord.ui.Modal):
             await interaction.response.edit_message(view = TaskSettingsView(self.dm_id, self.bot))
             await interaction.respond(
                 embed = discord.Embed(
-                    description = f"{emojis.cross} Лорд Ао разочарован, что разумная жизнь не была уничтожена в ходе Низвержения.",
+                    description = "<:cross:1297268043667476490> Лорд Ао разочарован, что разумная жизнь не была уничтожена в ходе Низвержения.",
                     colour = discord.Colour.red()),
                 ephemeral = True
                 )
@@ -42,7 +38,7 @@ class SetLimitModal(discord.ui.Modal):
         await interaction.response.edit_message(view = TaskSettingsView(self.dm_id, self.bot))
         await interaction.respond(
             embed = discord.Embed(
-                description = f"{emojis.members} Установлено значение лимита участников: `{set_limit_of_members}`",
+                description = f"<:members:1297268054840971265> Установлено значение лимита участников: `{set_limit_of_members}`",
                 colour = discord.Colour.blurple()),
             ephemeral = True
             )
@@ -69,7 +65,7 @@ class SetBlacklistView(discord.ui.View):
         await interaction.response.edit_message(view = TaskSettingsView(self.dm_id, self.bot))
         await interaction.respond(
             embed = discord.Embed(
-                description = f"{emojis.secure} Составлен нежелательный список авантюристов: {''.join(blacklist_members_mentions)}",
+                description = f"<:secure:1297268147363123200> Составлен нежелательный список авантюристов: {''.join(blacklist_members_mentions)}",
                 colour = discord.Colour.blurple()),
             ephemeral = True
             )
@@ -87,11 +83,11 @@ class TaskSettingsView(discord.ui.View):
             discord.SelectOption(
                 label = "Записать число требуемых авантюристов",
                 value = "set_limit",
-                emoji = emojis.members),
+                emoji = "<:members:1297268054840971265>"),
             discord.SelectOption(
                 label = "Записать имя авантюриста в нежелательный список",
                 value = "set_blacklist",
-                emoji = emojis.secure)
+                emoji = "<:secure:1297268147363123200>")
             ])
     async def select_callback(self, select, interaction):
         choice = select.values[0]
@@ -104,7 +100,7 @@ class TaskSettings(commands.Cog):
     def __init__(self, bot: discord.Bot):
         self.bot = bot
 
-    @subcommand("гильдия", independent=True)
+    @subcommand("гильдия")
     @discord.slash_command(name = "настроить_задание")
     async def task_settings(
         self,
@@ -118,7 +114,7 @@ class TaskSettings(commands.Cog):
                 forum_id = cursor.execute(f"SELECT forum_id FROM tasks WHERE dm_id = {ctx.author.id}").fetchone()[0]
                 await ctx.respond(
                     embed = discord.Embed(
-                        description = f"{emojis.manage} Настройка задания \"`{name}`\" (<#{forum_id}>).",
+                        description = f"<:manage:1297268323200929842> Настройка задания \"`{name}`\" (<#{forum_id}>).",
                         colour = discord.Colour.orange()),
                     view = TaskSettingsView(ctx.author.id, self.bot),
                     ephemeral = True
@@ -126,14 +122,14 @@ class TaskSettings(commands.Cog):
             else:
                 await ctx.respond(
                     embed = discord.Embed(
-                        description = f"{emojis.block} Вы ещё не запрашивали исполнение какого-либо задания.",
+                        description = "<:block:1297268337264300094> Вы ещё не запрашивали исполнение какого-либо задания.",
                         colour = discord.Colour.red()),
                     ephemeral = True
                     )
         else:
             await ctx.respond(
                 embed = discord.Embed(
-                    description = f"{emojis.block} Вы не являетесь сеньором.",
+                    description = "<:block:1297268337264300094> Вы не являетесь сеньором.",
                     colour = discord.Colour.red()),
                 ephemeral = True
                 )

@@ -5,8 +5,6 @@ from pycord.multicog import subcommand
 
 from .functions import autocomplete_mention_names
 from database import connection_mentions as connection, cursor_mentions as cursor
-from emojis import emojis
-
 
 class InformationMentions(commands.Cog):
     def __init__(self, bot):
@@ -29,18 +27,18 @@ class InformationMentions(commands.Cog):
         if check_mention_name.fetchone() is not None:
             mention_members = cursor.execute(f"SELECT members FROM mentions WHERE name = '{mention_name}'").fetchone()[0].split(".")
             mention_public = cursor.execute(f"SELECT public FROM mentions WHERE name = '{mention_name}'").fetchone()[0]
-            mention_public = f"{emojis.unblock} `(публичная)`" if mention_public == 1 else f"{emojis.block} `(личная)`"
+            mention_public = "<:unblock:1297267969096810567> `(публичная)`" if mention_public == 1 else "<:block:1297268337264300094> `(личная)`"
             text = ""
             for member in mention_members:
                 if member:
-                    text += f"\n> {emojis.member} <@!{member}>;"
+                    text += f"\n> <:member:1297268091197067396> <@!{member}>;"
                 else:
-                    text += f"\n> {emojis.cross} Участники отсутствуют."
-            await ctx.respond(f"{emojis.stats} Статистика рассылки `\"{mention_name}\"`:\n{emojis.moderator} Статус: {mention_public}.\n{emojis.members} Участники:{text[:-1]}.")
+                    text += "\n> <:cross:1297268043667476490> Участники отсутствуют."
+            await ctx.respond(f"<:stats:1297268132666150993> Статистика рассылки `\"{mention_name}\"`:\n<:moderator:1297268117965377689> Статус: {mention_public}.\n<:members:1297268054840971265> Участники:{text[:-1]}.")
         else:
-            await ctx.respond(f"{emojis.cross} Такой рассылки не существует.")
+            await ctx.respond(f"<:cross:1297268043667476490> Такой рассылки не существует.")
 
-    @subcommand("рассылки", independent=True)
+    @subcommand("рассылки")
     @discord.slash_command(name = "список_рассылок")
     async def mentions_list(
         self,
@@ -63,8 +61,8 @@ class InformationMentions(commands.Cog):
                 mention_name = mention_name[0]
                 owner_id = cursor.execute(f"SELECT owner_id FROM mentions WHERE name = '{mention_name}'").fetchone()[0]
                 try:
-                    members_count = len(cursor.execute(f"SELECT members FROM mentions WHERE name = '{mention_name}'").fetchone()[0].split(".").remove(""))
-                except Exception:
+                    members_count = len(cursor.execute(f"SELECT members FROM mentions WHERE name = '{party_name}'").fetchone()[0].split(".").remove(""))
+                except: 
                     members_count = 0
                 text_for_add = f"<:profile:1297268006468190269> Название: {mention_name};\n<:administrator:1297268078375080036> Владелец: {ctx.guild.get_member(owner_id)};\n<:members:1297268054840971265> Количество подписавшихся: {members_count}.\n\n"
                 if only_subs:
@@ -75,9 +73,9 @@ class InformationMentions(commands.Cog):
             if len(text) > 0:
                 await ctx.respond(text)
             else:
-                await ctx.respond(f"{emojis.cross} Рассылки отсутствуют.")
+                await ctx.respond(f"<:cross:1297268043667476490> Рассылки отсутствуют.")
         else:
-            await ctx.respond(f"{emojis.cross} Рассылки отсутствуют.")
+            await ctx.respond(f"<:cross:1297268043667476490> Рассылки отсутствуют.")
 
 def setup(bot):
     bot.add_cog(InformationMentions(bot))

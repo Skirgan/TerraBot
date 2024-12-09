@@ -1,14 +1,9 @@
 import asyncio
 
 import discord
-from discord import DMChannel
 from discord.ext import commands
 
-from config import config, read_config
-import config as config_file
-
-forum_tasks_id = config.categories.forum_tasks_id
-countdown = config.parameters.offtop_deletion_countdown
+from config import forum_tasks_id
 
 class EventsModeration(commands.Cog):
     def __init__(self, bot):
@@ -18,14 +13,15 @@ class EventsModeration(commands.Cog):
     async def on_message(self, message):
         try:
             if message.channel.category_id == forum_tasks_id:
-                async for message_in_channel_history in message.channel.history(oldest_first = True):
-                    if message_in_channel_history.content.startswith("((") and message_in_channel_history.author == message.author and message_in_channel_history != message:
-                        await asyncio.sleep(countdown)
-                        await message_in_channel_history.delete()
+                async for message_in_channel_history in message.channel.history(limit = None, oldest_first = True):
+                    if (message_in_channel_history.content.startswith("((") or message_in_channel_history.content.startswith("//"))and message_in_channel_history.author == message.author and message_in_channel_history != message:
+                        await asyncio.sleep(7)
+                        try:
+                            await message_in_channel_history.delete()
+                        except:
+                            pass
                         break
         except AttributeError:
-            pass
-        except TypeError:
             pass
 
 def setup(bot):

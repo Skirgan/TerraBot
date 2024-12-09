@@ -17,19 +17,10 @@ class EventsModeration(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         try:
-            print(f"\n\nnew message: {message.content}")
-            print(forum_tasks_id)
-            print(message.channel.category_id)
             if message.channel.category_id == forum_tasks_id:
-                print("it is in the forum tasks channel!")
-                print("parsing channel history:")
                 async for message_in_channel_history in message.channel.history(oldest_first = True):
-                    print(f"  \"{message_in_channel_history.content}\"")
                     if message_in_channel_history.content.startswith("((") and message_in_channel_history.author == message.author and message_in_channel_history != message:
-                        print("this is offtop")
-                        print(f"removing in {countdown} seconds...")
                         await asyncio.sleep(countdown)
-                        print("removed")
                         await message_in_channel_history.delete()
                         break
         except AttributeError:

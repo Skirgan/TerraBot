@@ -1,4 +1,5 @@
 import copy
+import io
 
 from colorama import Fore, Style
 import discord
@@ -19,7 +20,7 @@ s2 = "│"    # ├
 color = Fore.WHITE + Style.BRIGHT
 color2 = Fore.CYAN
 
-def initialize_config(file: str):
+def initialize_config(file):
     """:return: Config структуры config.категория.переменная = значение
     Принимает файл, проходит по всем строкам и пытается записать найденные параметры в словарь, попутно сортируя по категориям.
     Инструкция по использованию находится непосредственно в файле конфига.
@@ -31,9 +32,14 @@ def initialize_config(file: str):
 
     # Глубина словаря. Значение заменяет место, куда записываются переменные: так из {<место записи>} можно перейти на {"Роли": {<место записи>}} при необходимости.
     _level = _config    # Работает как указатель, кстати.
+    if isinstance(file, bytes):
+        file = io.StringIO(file.decode("utf-8-sig"))
+    else:
+        file = open(file, "r", encoding="utf-8-sig") # keyword параметры пишутся слитно с пробелом.
+        
 
-    with open(file, "r", encoding="utf-8-sig") as file:    # keyword параметры пишутся слитно с пробелом.
-
+    
+    try:    # мне лень с вима убирать все отступы, так что да. Потом уберу возможно.
         print(f"{color}┌──────{Fore.RESET} Начало чтения файла. ")
         print(f"{color}│{Fore.RESET}")
 
@@ -100,8 +106,8 @@ def initialize_config(file: str):
                 setattr(_level, name, value)
                 #    _level[name] = value
 
-                print(f"{color}│{Fore.RESET}")
-                print(f"{color}│{Fore.RESET}  Текущий вид словаря: {_config}. Вид _level: {_level}.")    # ╞══
+                # print(f"{color}│{Fore.RESET}")
+                # print(f"{color}│{Fore.RESET}  Текущий вид словаря: {_config}. Вид _level: {_level}.")    # ╞══
                 print(f"{color}│{Fore.RESET}")
 
                 continue
@@ -115,15 +121,24 @@ def initialize_config(file: str):
                 #    _level = dict()    # Переназначение _level на пустой словарь.
                 #    _config[line.removesuffix(":\n")] = _level    # Вкладывание _level внутрь конфига.
 
-                print(f"{color}│{Fore.RESET}{_indent} _level перенесён. Текущий вид словаря: {_config}")
+                # print(f"{color}│{Fore.RESET}{_indent} _level перенесён. Текущий вид словаря: {_config}")
 
             print(f"{color}│{Fore.RESET}")
+    
+    except Exception as e:
+        print(e)
 
-    print(f"{color}└──────{Fore.RESET} Конец чтения файла.  ")
+    print(f"{color}└──────{Fore.RESET} Конец чтения файла.  {Style.NORMAL}")
+
+    file.close()
     return _config
 
 config = initialize_config("config.txt")
 print(f"{color}======== КОНЕЦ ИНИЦИАЛИЗАЦИИ КОНФИГА ========{Fore.RESET}{Style.NORMAL}\n")
+
+def override_config(file):
+    global config
+    config = initialize_config(file)
 
 def read_config():
     """:return: Void
@@ -193,7 +208,7 @@ def override_config_ids(guild: discord.Guild) -> bool:
 
         # for debug purposes
         config = copy.deepcopy(_config)
-        read_config()
+        read_config()   
         return True
     
     i = input("Перезапись конфига прервана. Использовать неизменённый конфиг (y/yes) или начать сначала (enter)?\n").lower() 

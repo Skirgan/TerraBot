@@ -83,7 +83,8 @@ class MasterCommands(commands.Cog):
                     await forum.set_permissions(
                         target = ctx.author,
                         manage_channels = True,
-                        manage_permissions = True
+                        manage_permissions = True,
+                        send_messages = True
                         )
                     await forum.set_permissions(
                         target = role,
@@ -91,7 +92,8 @@ class MasterCommands(commands.Cog):
                         )
                     await forum.set_permissions(
                         target = ctx.guild.default_role,
-                        view_channel = False
+                        view_channel = False,
+                        send_messages = False
                         )
                     cursor.execute(f"UPDATE tasks SET name = '{name}' WHERE position = {position}")
                     cursor.execute(f"UPDATE tasks SET description = '{description}' WHERE position = {position}")

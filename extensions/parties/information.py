@@ -63,7 +63,7 @@ class InformationParties(commands.Cog):
                     members_count = len(cursor.execute(f"SELECT members FROM parties WHERE name = '{party_name}'").fetchone()[0].split(".").remove(""))
                 except Exception:
                     members_count = 0
-                text_for_add = f"{emojis.profile} Название: {party_name};\n{emojis.administrator} Организатор: {ctx.guild.get_member(owner_id)};\n{emojis.members} Количество участников: {members_count}.```\n"
+                text_for_add = f"<:profile:1297268006468190269> Название: {party_name};\n<:administrator:1297268078375080036> Организатор: {ctx.guild.get_member(owner_id)};\n<:members:1297268054840971265> Количество участников: {members_count}.\n\n"
                 if only_subs:
                     if str(ctx.author.id) in cursor.execute(f"SELECT members FROM parties WHERE name = '{party_name}'").fetchone()[0].split("."):
                         text += text_for_add

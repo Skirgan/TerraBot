@@ -180,7 +180,7 @@ class AdminSettings(commands.Cog):
             await ctx.respond(f"{emojis.block} Вы не являетесь администратором.")
 
     @settings.command(name = "upload")
-    async def reload_cog(
+    async def upload_cog(
         self,
         ctx: discord.ApplicationContext,
         file: discord.Option(

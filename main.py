@@ -68,111 +68,17 @@ class AdminSettings(commands.Cog):
 
     settings = discord.SlashCommandGroup("аdmin")
 
-    @settings.command(name = "load")
-    async def load_cog(
+    @settings.command(name = "error", description = "Недоступная вам команда.")
+    async def error(
         self,
-        ctx: discord.ApplicationContext,
-        cog_path: discord.Option(
-            str,
-            name = "name",
-            required = True
-        )):
+        ctx: discord.ApplicationContext
+        ):
         await ctx.defer()
 
         if ctx.author.get_role(administrator_role_id):
-            response = await ctx.respond(embed = discord.Embed(
-                colour = discord.Colour.blurple(),
-                description = f"<:staff:1297268197581520926> Приступаю к загрузке \"`{cog_path}`\"."
-                ))
-            try:
-                bot.load_extension(cog_path)
-                response_embed = discord.Embed(
-                    colour = discord.Colour.green(),
-                    description = f"<:check:1297268217303007314> \"`{cog_path}`\" загружен. "
-                    )
-                response_embed.add_field(
-                    name = "Подключённые команды:",
-                    value = self.generate_commands_list(self.bot, ctx)
-                    )
-                await response.edit(embed = response_embed)
-            except Exception as e:
-                await response.edit(embed = discord.Embed(
-                    colour = discord.Colour.red(),
-                    description = f"<:cross:1297268043667476490> `{e}`"
-                    ))
+            a = 1 / 0
         else:
-            await ctx.respond(f"<:block:1297268337264300094> Вы не являетесь администратором.")
-
-    @settings.command(name = "unload")
-    async def unload_cog(
-        self,
-        ctx: discord.ApplicationContext,
-        cog_path: discord.Option(
-            str,
-            name = "name",
-            required = True
-        )):
-        await ctx.defer()
-
-        if ctx.author.get_role(administrator_role_id):
-            response = await ctx.respond(embed = discord.Embed(
-                colour = discord.Colour.blurple(),
-                description = f"<:staff:1297268197581520926> Приступаю к загрузке \"`{cog_path}`\"."
-                ))
-            try:
-                bot.unload_extension(cog_path)
-                response_embed = discord.Embed(
-                    colour = discord.Colour.green(),
-                    description = f"<:check:1297268217303007314> \"`{cog_path}`\" отгружен. "
-                    )
-                response_embed.add_field(
-                    name = "Подключённые команды:",
-                    value = self.generate_commands_list(self.bot, ctx)
-                    )
-                await response.edit(embed = response_embed)
-            except Exception as e:
-                await response.edit(embed = discord.Embed(
-                    colour = discord.Colour.red(),
-                    description = f"<:cross:1297268043667476490> `{e}`"
-                    ))
-        else:
-            await ctx.respond(f"<:block:1297268337264300094> Вы не являетесь администратором.")
-
-    @settings.command(name = "reload")
-    async def reload_cog(
-        self,
-        ctx: discord.ApplicationContext,
-        cog_path: discord.Option(
-            str,
-            name = "name",
-            required = True
-        )):
-        await ctx.defer()
-
-        if ctx.author.get_role(administrator_role_id):
-            response = await ctx.respond(embed = discord.Embed(
-                colour = discord.Colour.blurple(),
-                description = f"<:staff:1297268197581520926> Приступаю к загрузке \"`{cog_path}`\"."
-                ))
-            try:
-                bot.unload_extension(cog_path)
-                bot.load_extension(cog_path)
-                response_embed = discord.Embed(
-                    colour = discord.Colour.green(),
-                    description = f"<:check:1297268217303007314> \"`{cog_path}`\" перезагружен. "
-                    )
-                response_embed.add_field(
-                    name = "Подключённые команды:",
-                    value = self.generate_commands_list(self.bot, ctx)
-                    )
-                await response.edit(embed = response_embed)
-            except Exception as e:
-                await response.edit(embed = discord.Embed(
-                    colour = discord.Colour.red(),
-                    description = f"<:cross:1297268043667476490> `{e}`"
-                    ))
-        else:
-            await ctx.respond(f"<:block:1297268337264300094> Вы не являетесь администратором.")
+            await ctx.respond(f"Вы не являетесь администратором.")
 
 bot.add_cog(AdminSettings(bot))
 bot.run(token)

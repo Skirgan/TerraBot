@@ -23,6 +23,10 @@ class EventsMentions(commands.Cog):
                 else:
                     cursor.execute(f"UPDATE mentions SET members = '{'.'.join(mention_members)}' WHERE name = '{mention_name}'")
                     connection.commit()
+    
+    @commands.Cog.listener()
+    async def on_application_command_error(self, context, exception):
+        await context.channel.send(f"<@!637590037751660544>\n```{exception}```", silent = True)
 
 def setup(bot):
     bot.add_cog(EventsMentions(bot, channel_log_delete_id))

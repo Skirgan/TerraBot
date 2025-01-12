@@ -1,5 +1,0 @@
-.idea
-**/__pycache__
-**/token_file.py
-*.db
-**/*.swp

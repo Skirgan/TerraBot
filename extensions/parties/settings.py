@@ -16,13 +16,15 @@ class PartyOwnerView(discord.ui.View):
         placeholder = "Выберите нового организатора группы."
         )
     async def user_select_callback(self, select, interaction):
-        category = discord.utils.get(ctx.guild.categories, id = cursor.execute(f"SELECT category_id FROM parties WHERE name = '{party_name}'").fetchone()[0])
+        category = discord.utils.get(interaction.guild.categories, id = cursor.execute(f"SELECT category_id FROM parties WHERE name = '{self.party_name}'").fetchone()[0])
+        old_owner = interaction.guild.get_member(cursor.execute(f"SELECT owner_id FROM parties WHERE name = '{self.party_name}'").fetchone()[0])
+        if old_owner:
+            await category.set_permissions(
+                target = old_owner,
+                overwrite = None
+                )
         await category.set_permissions(
-            target = ctx.author,
-            overwrite = None
-            )
-        await category.set_permissions(
-            target = member,
+            target = select.values[0],
             view_channel = True,
             manage_channels = True,
             manage_permissions = True

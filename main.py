@@ -7,7 +7,7 @@ from colorama import Fore, Style
 from bot import bot
 from token_file import token
 from config import override_config_ids, config, read_config, override_config
-from functions import get_guild_by_name, extensions_generator, print_commands
+from functions import get_guild_by_name, extensions_generator
 from emojis import emojis
 
 administrator_role_id = None
@@ -27,27 +27,22 @@ async def on_ready():
         guild = get_guild_by_name(input("Включена функция перезаписи ID каналов и ролей.\nВведите название сервера: "))
         guild_id = guild.id
         override_config_ids(guild)
-        
+       
+        # не трогай то, что работает
         from config import config
 
     administrator_role_id = config.roles.administrator_role_id
+
+    # см. functions.py
     extensions = extensions_generator()
 
-#    black_list_files = ["__init__.py", "functions.py"]
-#    for directory, directories, files in os.walk("./extensions"):
-#        for file in os.listdir(directory):
-#            if file.endswith(".py") and file not in black_list_files:
-#                print(f"{Fore.BLUE}·{Fore.RESET} {Fore.CYAN}Попытка загрузки{Fore.RESET}: {directory[2:]}.{file}", end = "")
-#                try:
-#                    str_for_load = f"{directory[2:]}/{file[:-3]}".replace("\\", ".").replace("/", ".")
-#                    bot.load_extension(str_for_load)
     for extension in extensions:
-        bot.load(extension)
+        bot.load(extension)    # см. bot.py
 
     if not bot.auto_sync_commands:
         await bot.sync_commands(guild_ids = [guild_id])
 
-    print_commands(bot)
+    bot.print_commands()
 
     await bot.change_presence(activity = discord.Activity(type = discord.ActivityType.custom, state =f"Запуск произведён {datetime.datetime.now().strftime('%H:%M:%S')}"))
 

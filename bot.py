@@ -2,7 +2,7 @@ from types import MethodType
 
 import discord
 from pycord.multicog import Bot
-from colorama import Fore
+from colorama import Fore, Style
 
 intents = discord.Intents.default()
 # intents = discord.Intents.all()
